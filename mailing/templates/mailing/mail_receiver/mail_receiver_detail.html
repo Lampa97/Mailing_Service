@@ -8,4 +8,11 @@
     <p>Email: {{ mail_receiver.email }}</p>
     <p>Комментарий: {{ mail_receiver.comment }}</p>
 
+<a href="{% url 'mailing:mail-receiver-update' mail_receiver.pk %}">
+    <button type="button" class="btn btn-lg btn-block btn-outline-secondary">Редактировать</button>
+</a>
+<a href="{% url 'mailing:mail-receiver-delete' mail_receiver.pk %}">
+    <button type="button" class="btn btn-lg btn-block btn-outline-danger">Удалить</button>
+</a>
+
 {% endblock %}

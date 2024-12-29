@@ -16,7 +16,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url 'mailing:mail-receivers-list' %}">Получатели</a></li>
             <li><a class="dropdown-item" href="#">Рассылки</a></li>
-            <li><a class="dropdown-item" href="#">Сообщения</a></li>
+            <li><a class="dropdown-item" href="{% url 'mailing:messages-list' %}">Сообщения</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -26,7 +26,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url 'mailing:mail-receiver-create' %}">Получатель</a></li>
             <li><a class="dropdown-item" href="#">Рассылка</a></li>
-            <li><a class="dropdown-item" href="#">Сообщение</a></li>
+            <li><a class="dropdown-item" href="{% url 'mailing:message-create' %}">Сообщение</a></li>
           </ul>
         </li>
         <li class="nav-item">

@@ -1,0 +1,15 @@
+{% extends "mailing/base.html" %}
+
+{% block title %} Все сообщения {% endblock %}
+
+{% block content %}
+
+{% for message in messages %}
+
+    <p>Номер: {{ message.pk }}</p>
+    <p>Тема: <a href="{% url 'mailing:message-detail' message.pk %}">{{ message.title }}</a></p>
+    <p>Текст: {{ message.body|truncatechars:100 }}</p>
+
+{% endfor %}
+
+{% endblock %}

@@ -6,9 +6,10 @@
 
 {% for mail_receiver in mail_receivers %}
 
-    <p>Ф.И.О: {{ mail_receiver.full_name }}</p>
+    <p>Номер: {{ mail_receiver.pk }}</p>
+    <p>Ф.И.О: <a href="{% url 'mailing:mail-receiver-detail' mail_receiver.pk %}">{{ mail_receiver.full_name }}</a></p>
     <p>Email: {{ mail_receiver.email }}</p>
-    <p>Комментарий: {{ mail_receiver.comment }}</p>
+    <p>Комментарий: {{ mail_receiver.comment|truncatechars:100 }}</p>
 {% endfor %}
 
 {% endblock %}

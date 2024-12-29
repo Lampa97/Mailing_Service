@@ -8,6 +8,7 @@ class MailReceiver(models.Model):
     def __str__(self):
         return f"{self.full_name}: {self.email}"
 
+
     class Meta:
         verbose_name = "Получатель рассылки"
         verbose_name_plural = "Получатели рассылки"
@@ -16,7 +17,7 @@ class MailReceiver(models.Model):
 
 class Message(models.Model):
     title = models.CharField(max_length=100, verbose_name='Тема')
-    body = models.TextField(verbose_name='Тело')
+    body = models.TextField(verbose_name='Текст')
 
     def __str__(self):
         return self.title
@@ -43,7 +44,7 @@ class MailingUnit(models.Model):
     finished_at = models.DateTimeField(verbose_name="Дата окончания отправки", blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='Статус')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='message')
-    receivers = models.ManyToManyField(MailReceiver)
+    receivers = models.ManyToManyField(MailReceiver, related_name="mailing_units", verbose_name="Получатели")
 
     def __str__(self):
         return f"{self.receivers}: {self.status}"
