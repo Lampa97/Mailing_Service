@@ -1,0 +1,14 @@
+{% extends "mailing/base.html" %}
+
+{% block title %} Все получатели {% endblock %}
+
+{% block content %}
+
+{% for mail_receiver in mail_receivers %}
+
+    <p>Ф.И.О: {{ mail_receiver.full_name }}</p>
+    <p>Email: {{ mail_receiver.email }}</p>
+    <p>Комментарий: {{ mail_receiver.comment }}</p>
+{% endfor %}
+
+{% endblock %}

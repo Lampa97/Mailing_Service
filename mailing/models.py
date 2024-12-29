@@ -27,7 +27,7 @@ class Message(models.Model):
         ordering = ["title"]
 
 
-class Mailing(models.Model):
+class MailingUnit(models.Model):
     FINISHED = 'Finished'
     CREATED = 'Created'
     LAUNCHED = 'Launched'
@@ -67,7 +67,7 @@ class MailingAttempt(models.Model):
     attempt_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время попытки')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='Статус')
     server_answer = models.TextField(verbose_name='Ответ почтового сервера')
-    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE)
+    mailing = models.ForeignKey(MailingUnit, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.mailing}: {self.status}"
