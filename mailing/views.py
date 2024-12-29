@@ -1,20 +1,22 @@
 from django.shortcuts import render
-
 from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
-from .models import MailingUnit, MailReceiver, MailingAttempt, Message
-
-from django.views.generic import TemplateView, CreateView, DetailView, UpdateView, DeleteView, ListView
+from .models import MailingUnit, MailReceiver, Message
 
 
 class MailingView(TemplateView):
 
     def get(self, request):
         all_mailings = MailingUnit.objects.all().count()
-        launched_mailings = MailingUnit.objects.filter(status='Launched').count()
+        launched_mailings = MailingUnit.objects.filter(status="Launched").count()
         unique_receivers = MailReceiver.objects.all().count()
 
-        context = {"all_mailings": all_mailings, "launched_mailings": launched_mailings, "unique_receivers": unique_receivers}
+        context = {
+            "all_mailings": all_mailings,
+            "launched_mailings": launched_mailings,
+            "unique_receivers": unique_receivers,
+        }
 
         return render(request, "mailing/home.html", context)
 
@@ -23,7 +25,6 @@ class MailReceiverListView(ListView):
     model = MailReceiver
     template_name = "mailing/mail_receiver/mail_receivers_list.html"
     context_object_name = "mail_receivers"
-
 
 
 class MailReceiverDetailView(DetailView):
@@ -61,6 +62,7 @@ class MessageListView(ListView):
     template_name = "mailing/message/messages_list.html"
     context_object_name = "messages"
 
+
 class MessageDetailView(DetailView):
     model = Message
     template_name = "mailing/message/message_detail.html"
@@ -71,14 +73,20 @@ class MessageCreateView(CreateView):
     model = Message
     template_name = "mailing/message/message_create.html"
     context_object_name = "message"
-    fields = ["title", "body",]
+    fields = [
+        "title",
+        "body",
+    ]
     success_url = reverse_lazy("mailing:home")
 
 
 class MessageUpdateView(UpdateView):
     model = Message
     template_name = "mailing/message/message_update.html"
-    fields = ["title", "body",]
+    fields = [
+        "title",
+        "body",
+    ]
 
     def get_success_url(self):
         return reverse_lazy("mailing:message-detail", kwargs={"pk": self.object.pk})
@@ -96,6 +104,7 @@ class MailingUnitListView(ListView):
     template_name = "mailing/mailing_unit/mailing_units_list.html"
     context_object_name = "mailing_units"
 
+
 class MailingUnitDetailView(DetailView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -106,14 +115,20 @@ class MailingUnitCreateView(CreateView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_create.html"
     context_object_name = "mailing_unit"
-    fields = ["message", "receivers",]
+    fields = [
+        "message",
+        "receivers",
+    ]
     success_url = reverse_lazy("mailing:home")
 
 
 class MailingUnitUpdateView(UpdateView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_update.html"
-    fields = ["message", "receivers",]
+    fields = [
+        "message",
+        "receivers",
+    ]
 
     def get_success_url(self):
         return reverse_lazy("mailing:mailing-unit-detail", kwargs={"pk": self.object.pk})
