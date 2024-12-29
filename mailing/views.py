@@ -109,12 +109,6 @@ class MailingUnitCreateView(CreateView):
     fields = ["message", "receivers",]
     success_url = reverse_lazy("mailing:home")
 
-    def form_valid(self, form):
-        if len(form.instance.receivers) < 1:
-            form.instance.status = "Created"
-        else:
-            form.instance.status = "Launched"
-        return super().form_valid(form)
 
 class MailingUnitUpdateView(UpdateView):
     model = MailingUnit

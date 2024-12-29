@@ -41,13 +41,13 @@ class MailingUnit(models.Model):
     ]
 
     started_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата первой отправки")
-    finished_at = models.DateTimeField(verbose_name="Дата окончания отправки", blank=True)
+    finished_at = models.DateTimeField(verbose_name="Дата окончания отправки", blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='Статус')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='message')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='message', verbose_name="Тема")
     receivers = models.ManyToManyField(MailReceiver, related_name="mailing_units", verbose_name="Получатели")
 
     def __str__(self):
-        return f"{self.receivers}: {self.status}"
+        return f"{self.message}: {self.status}"
 
     class Meta:
         verbose_name = "Рассылка"

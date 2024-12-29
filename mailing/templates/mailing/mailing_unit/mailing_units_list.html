@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "mailing/base.html" %}
 
-</body>
-</html>
+{% block title %} Все сообщения {% endblock %}
+
+{% block content %}
+
+{% for mailing_unit in mailing_units %}
+
+    <p>Номер: {{ mailing_unit.pk }}</p>
+    <p>Тема: <a href="{% url 'mailing:mailing-unit-detail' mailing_unit.pk %}">{{ mailing_unit.message }}</a></p>
+    <p>Статус: {{ mailing_unit.status }}</p>
+
+{% endfor %}
+
+{% endblock %}

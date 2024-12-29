@@ -10,9 +10,17 @@ class MailReceiverAdmin(admin.ModelAdmin):
 
 @admin.register(MailingUnit)
 class MailingUnitAdmin(admin.ModelAdmin):
-    list_display = ("status", "started_at", "finished_at")
+    list_display = ("message", "status", "started_at", "finished_at", "get_receivers")
     list_filter = ["status"]
-    search_fields = ("status", "receivers")
+    search_fields = ("status", "get_receivers")
+
+    @admin.display(description="Тема")
+    def get_title(self, obj):
+        return obj.message.get(obj.pk)
+
+    @admin.display(description="Получатели")
+    def get_receivers(self, obj):
+        return [f"{receiver.full_name}: {receiver.email}" for receiver in obj.receivers.all()]
 
 
 @admin.register(MailingAttempt)
