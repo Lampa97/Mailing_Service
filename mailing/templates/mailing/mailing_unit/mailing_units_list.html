@@ -10,6 +10,15 @@
     <p>Тема: <a href="{% url 'mailing:mailing-unit-detail' mailing_unit.pk %}">{{ mailing_unit.message }}</a></p>
     <p>Статус: {{ mailing_unit.status }}</p>
 
+    {% if mailing_unit.status != 'Launched' %}
+    <a href="{% url 'mailing:mailing-units-list' %}">
+        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Начать Рассылку</button>
+    </a>
+    {% else %}
+    <a href="{% url 'mailing:mailing-units-list' %}">
+        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Завершить Рассылку</button>
+    </a>
+    {% endif %}
 {% endfor %}
 
 {% endblock %}

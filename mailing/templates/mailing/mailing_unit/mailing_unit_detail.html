@@ -4,7 +4,13 @@
 
 {% block content %}
 
+    {% if mailing_unit.status == 'Launched' %}
     <p>Запущена в: {{ mailing_unit.started_at }}</p>
+    {% elif mailing_unit.status == 'Finished' %}
+    <p>Завершена в: {{ mailing_unit.finished_at }}</p>
+    {% else %}
+    <p> Рассылка еще не была запущена </p>
+    {% endif %}
 
     <p>Тема: <a href="{% url 'mailing:message-detail' mailing_unit.message.pk %}">{{ mailing_unit.message }}</a></p>
     <p>Получатели: {{ mailing_unit.receivers }}</p>
