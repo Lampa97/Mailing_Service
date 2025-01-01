@@ -62,9 +62,9 @@ class MailingAttempt(models.Model):
     mailing = models.ForeignKey(MailingUnit, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.mailing}: {self.status}"
+        return f"{self.mailing}: {self.status} ({self.attempt_at})"
 
     class Meta:
         verbose_name = "Попытка рассылки"
         verbose_name_plural = "Попытки рассылки"
-        ordering = ["mailing", "status", "attempt_at"]
+        ordering = [ "-attempt_at", "mailing", "status",]

@@ -1,14 +1,16 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView, View
-from django.core.mail import send_mail
 from django.conf import settings
-from .forms import MailingUnitForm
+from django.core.mail import BadHeaderError, send_mail
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.utils import timezone
-from .models import MailingUnit, MailReceiver, Message
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
+
+from .forms import MailingUnitForm, MailReceiverForm, MessageForm
+from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 
 
-class MailingView(TemplateView):
+class MailingView(View):
 
     def get(self, request):
         all_mailings = MailingUnit.objects.all().count()
@@ -38,16 +40,17 @@ class MailReceiverDetailView(DetailView):
 
 class MailReceiverCreateView(CreateView):
     model = MailReceiver
-    template_name = "mailing/mail_receiver/mail_receiver_create.html"
+    form_class = MailReceiverForm
+    template_name = "mailing/mail_receiver/mail_receiver_form.html"
     context_object_name = "mail_receiver"
-    fields = ["email", "full_name", "comment"]
-    success_url = reverse_lazy("mailing:home")
+    success_url = reverse_lazy("mailing:maıl-receivers-list")
 
 
 class MailReceiverUpdateView(UpdateView):
     model = MailReceiver
-    template_name = "mailing/mail_receiver/mail_receiver_update.html"
-    fields = ["email", "full_name", "comment"]
+    form_class = MailReceiverForm
+    context_object_name = "mail_receiver"
+    template_name = "mailing/mail_receiver/mail_receiver_form.html"
 
     def get_success_url(self):
         return reverse_lazy("mailing:mail-receiver-detail", kwargs={"pk": self.object.pk})
@@ -74,22 +77,17 @@ class MessageDetailView(DetailView):
 
 class MessageCreateView(CreateView):
     model = Message
+    form_class = MessageForm
     template_name = "mailing/message/message_create.html"
     context_object_name = "message"
-    fields = [
-        "title",
-        "body",
-    ]
     success_url = reverse_lazy("mailing:home")
 
 
 class MessageUpdateView(UpdateView):
     model = Message
+    form_class = MessageForm
     template_name = "mailing/message/message_update.html"
-    fields = [
-        "title",
-        "body",
-    ]
+
 
     def get_success_url(self):
         return reverse_lazy("mailing:message-detail", kwargs={"pk": self.object.pk})
@@ -120,6 +118,7 @@ class MailingUnitCreateView(CreateView):
     template_name = "mailing/mailing_unit/mailing_unit_form.html"
     success_url = reverse_lazy("mailing:mailing-units-list")
 
+
 class MailingUnitUpdateView(UpdateView):
     model = MailingUnit
     form_class = MailingUnitForm
@@ -139,20 +138,45 @@ class MailingUnitSendMailView(View):
     context_object_name = "mailing_unit"
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
 
-
     def post(self, request, pk):
         mailing_unit = get_object_or_404(MailingUnit, pk=pk)
-        send_mail(
-            subject=mailing_unit.message.title,
-            message=mailing_unit.message.body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[receiver.email for receiver in mailing_unit.receivers.all()],
+        self.send_emails(mailing_unit)
+        self.update_status(mailing_unit, "Launched")
+        return redirect("mailing:mailing-units-list")
+
+    def send_emails(self, mailing_unit):
+        recipients = [receiver.email for receiver in mailing_unit.receivers.all()]
+        for receiver in recipients:
+            try:
+                send_mail(
+                    subject=mailing_unit.message.title,
+                    message=mailing_unit.message.body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[receiver],
+                    fail_silently=False,
+                )
+            except BadHeaderError:
+                return self.handle_exception("Invalid header found.", receiver, mailing_unit)
+            except Exception as e:
+                return self.handle_exception(str(e), receiver, mailing_unit)
+            else:
+                MailingAttempt.objects.create(
+                    mailing=mailing_unit, status="Success", server_answer=f"Email успешно отправлен для {receiver}"
+                )
+
+    def handle_exception(self, error_message, receiver, mailing_unit):
+        MailingAttempt.objects.create(
+            mailing=mailing_unit,
+            status="Failed",
+            server_answer=f'Возникла ошибка: "{error_message}" при отправке на {receiver}',
         )
-        # Update status to 'Launched'
-        if mailing_unit.status != 'Launched':
-            mailing_unit.status = 'Launched'
+        return HttpResponse(error_message)
+
+    def update_status(self, mailing_unit, status):
+        if mailing_unit.status != status:
+            mailing_unit.status = status
             mailing_unit.save()
-        return redirect('mailing:mailing-units-list')
+
 
 class MailingUnitStopMailView(View):
     model = MailingUnit
@@ -161,7 +185,7 @@ class MailingUnitStopMailView(View):
 
     def post(self, request, pk):
         mailing_unit = get_object_or_404(MailingUnit, pk=pk)
-        mailing_unit.status = 'Finished'
+        mailing_unit.status = "Finished"
         mailing_unit.finished_at = timezone.now()
         mailing_unit.save()
-        return redirect('mailing:mailing-units-list')
+        return redirect("mailing:mailing-units-list")

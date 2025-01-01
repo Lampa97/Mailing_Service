@@ -6,7 +6,6 @@ app_name = "mailing"
 
 urlpatterns = [
     path("", views.MailingView.as_view(), name="home"),
-
     path("mail-receivers-list/", views.MailReceiverListView.as_view(), name="mail-receivers-list"),
     path("mail-receiver-detail/<int:pk>/", views.MailReceiverDetailView.as_view(), name="mail-receiver-detail"),
     path("mail-receiver-create/", views.MailReceiverCreateView.as_view(), name="mail-receiver-create"),
@@ -25,5 +24,7 @@ urlpatterns = [
     path("mailing-unit-create/", views.MailingUnitCreateView.as_view(), name="mailing-unit-create"),
     path("mailing-unit-update/<int:pk>/", views.MailingUnitUpdateView.as_view(), name="mailing-unit-update"),
     path("mailing-unit/send-mail/<int:pk>/", views.MailingUnitSendMailView.as_view(), name="mailing-unit-send-mail"),
-    path("mailing-unit/stop-mailing/<int:pk>/", views.MailingUnitStopMailView.as_view(), name="mailing-unit-stop-mail"),
+    path(
+        "mailing-unit/stop-mailing/<int:pk>/", views.MailingUnitStopMailView.as_view(), name="mailing-unit-stop-mail"
+    ),
 ]
