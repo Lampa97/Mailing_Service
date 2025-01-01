@@ -43,7 +43,7 @@ class MailReceiverCreateView(CreateView):
     form_class = MailReceiverForm
     template_name = "mailing/mail_receiver/mail_receiver_form.html"
     context_object_name = "mail_receiver"
-    success_url = reverse_lazy("mailing:maıl-receivers-list")
+    success_url = reverse_lazy("mailing:mail-receivers-list")
 
 
 class MailReceiverUpdateView(UpdateView):
