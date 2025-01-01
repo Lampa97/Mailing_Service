@@ -7,12 +7,12 @@ class MailReceiver(models.Model):
     comment = models.TextField(verbose_name="Комментарий")
 
     def __str__(self):
-        return f"{self.full_name}: {self.email}"
+        return f"{self.email}: {self.full_name}"
 
     class Meta:
         verbose_name = "Получатель рассылки"
         verbose_name_plural = "Получатели рассылки"
-        ordering = ["full_name"]
+        ordering = ["email"]
 
 
 class Message(models.Model):
@@ -47,7 +47,7 @@ class MailingUnit(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
-        ordering = ["status", "started_at"]
+        ordering = ["-status", "started_at"]
 
 
 class MailingAttempt(models.Model):

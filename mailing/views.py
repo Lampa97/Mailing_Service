@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
-
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView, View
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import MailingUnitForm
+from django.utils import timezone
 from .models import MailingUnit, MailReceiver, Message
 
 
@@ -113,29 +116,52 @@ class MailingUnitDetailView(DetailView):
 
 class MailingUnitCreateView(CreateView):
     model = MailingUnit
-    template_name = "mailing/mailing_unit/mailing_unit_create.html"
-    context_object_name = "mailing_unit"
-    fields = [
-        "message",
-        "receivers",
-    ]
-    success_url = reverse_lazy("mailing:home")
-
+    form_class = MailingUnitForm
+    template_name = "mailing/mailing_unit/mailing_unit_form.html"
+    success_url = reverse_lazy("mailing:mailing-units-list")
 
 class MailingUnitUpdateView(UpdateView):
     model = MailingUnit
-    template_name = "mailing/mailing_unit/mailing_unit_update.html"
-    fields = [
-        "message",
-        "receivers",
-    ]
-
-    def get_success_url(self):
-        return reverse_lazy("mailing:mailing-unit-detail", kwargs={"pk": self.object.pk})
+    form_class = MailingUnitForm
+    template_name = "mailing/mailing_unit/mailing_unit_form.html"
+    success_url = reverse_lazy("mailing:mailing-units-list")
 
 
 class MailingUnitDeleteView(DeleteView):
     model = MailingUnit
     context_object_name = "mailing_unit"
     template_name = "mailing/mailing_unit/mailing_unit_delete.html"
-    success_url = reverse_lazy("mailing:home")
+    success_url = reverse_lazy("mailing:mailing-units-list")
+
+
+class MailingUnitSendMailView(View):
+    model = MailingUnit
+    context_object_name = "mailing_unit"
+    template_name = "mailing/mailing_unit/mailing_unit_detail.html"
+
+
+    def post(self, request, pk):
+        mailing_unit = get_object_or_404(MailingUnit, pk=pk)
+        send_mail(
+            subject=mailing_unit.message.title,
+            message=mailing_unit.message.body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[receiver.email for receiver in mailing_unit.receivers.all()],
+        )
+        # Update status to 'Launched'
+        if mailing_unit.status != 'Launched':
+            mailing_unit.status = 'Launched'
+            mailing_unit.save()
+        return redirect('mailing:mailing-units-list')
+
+class MailingUnitStopMailView(View):
+    model = MailingUnit
+    context_object_name = "mailing_unit"
+    template_name = "mailing/mailing_unit/mailing_unit_detail.html"
+
+    def post(self, request, pk):
+        mailing_unit = get_object_or_404(MailingUnit, pk=pk)
+        mailing_unit.status = 'Finished'
+        mailing_unit.finished_at = timezone.now()
+        mailing_unit.save()
+        return redirect('mailing:mailing-units-list')
