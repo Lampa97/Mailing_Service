@@ -25,6 +25,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "mailing",
+    "django_apscheduler",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -109,9 +110,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
 
