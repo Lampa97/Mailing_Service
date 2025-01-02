@@ -1,8 +1,10 @@
 import logging
 from django.core.management.base import BaseCommand
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
-from django_apscheduler.jobstores import DjangoJobStore, register_events
+from django_apscheduler.models import DjangoJobExecution
+from django_apscheduler.jobstores import DjangoJobStore
+from django_apscheduler import util
 from django.core.mail import send_mail
 from django.conf import settings
 from mailing.models import MailingUnit, MailingAttempt
@@ -10,7 +12,7 @@ from mailing.models import MailingUnit, MailingAttempt
 logger = logging.getLogger(__name__)
 
 def send_emails():
-    mailing_units = MailingUnit.objects.filter(status__in=['Created', 'Launched'])
+    mailing_units = MailingUnit.objects.filter(status='Launched')
     for mailing_unit in mailing_units:
         recipients = [receiver.email for receiver in mailing_unit.receivers.all()]
         for receiver in recipients:
@@ -32,25 +34,45 @@ def send_emails():
         mailing_unit.status = 'Launched'
         mailing_unit.save()
 
+
+@util.close_old_connections
+def delete_old_job_executions(max_age=604_800):
+    DjangoJobExecution.objects.delete_old_job_executions(max_age)
+
+
 class Command(BaseCommand):
-    help = "Starts the APScheduler to send emails"
+  help = "Runs APScheduler."
 
-    def handle(self, *args, **kwargs):
-        scheduler = BackgroundScheduler()
-        scheduler.add_jobstore(DjangoJobStore(), "default")
+  def handle(self, *args, **options):
+    scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
+    scheduler.add_jobstore(DjangoJobStore(), "default")
 
-        # Schedule the job to run every day at 8:00 AM
-        scheduler.add_job(
-            send_emails,
-            trigger=CronTrigger(hour="11", minute="0"),
-            id="send_emails",
-            max_instances=1,
-            replace_existing=True,
-        )
-        logger.info("Added job 'send_emails'.")
+    scheduler.add_job(
+      send_emails,
+      trigger=CronTrigger(hour="14", minute="30"),
+      id="send_emails",
+      max_instances=1,
+      replace_existing=True,
+    )
+    logger.info("Added job 'send_emails' to run at 11:30 AM every day.")
 
-        register_events(scheduler)
-        scheduler.start()
-        logger.info("Scheduler started.")
+    scheduler.add_job(
+      delete_old_job_executions,
+      trigger=CronTrigger(
+        day_of_week="mon", hour="15", minute="00"
+      ),
+      id="delete_old_job_executions",
+      max_instances=1,
+      replace_existing=True,
+    )
+    logger.info(
+      "Added weekly job: 'delete_old_job_executions'."
+    )
 
-        self.stdout.write(self.style.SUCCESS("Scheduler started successfully"))
+    try:
+      logger.info("Starting scheduler...")
+      scheduler.start()
+    except KeyboardInterrupt:
+      logger.info("Stopping scheduler...")
+      scheduler.shutdown()
+      logger.info("Scheduler shut down successfully!")

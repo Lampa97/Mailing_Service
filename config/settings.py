@@ -112,6 +112,7 @@ USE_TZ = True
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 STATIC_URL = "static/"
 
@@ -127,6 +128,24 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
