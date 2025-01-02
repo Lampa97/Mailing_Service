@@ -1,0 +1,16 @@
+{% extends "mailing/base.html" %}
+
+{% block title %} Все Попытки Рассылки {% endblock %}
+
+{% block content %}
+
+
+{% for attempt in mailing_attempts %}
+
+    <p>Дата и время: {{ attempt.attempt_at }}</p>
+    <p>Статус: {{ attempt.status }}</a></p>
+    <p>Ответ Сервера: {{ attempt.server_answer }}</p>
+
+{% endfor %}
+
+{% endblock %}

@@ -78,7 +78,7 @@ class MessageDetailView(DetailView):
 class MessageCreateView(CreateView):
     model = Message
     form_class = MessageForm
-    template_name = "mailing/message/message_create.html"
+    template_name = "mailing/message/message_form.html"
     context_object_name = "message"
     success_url = reverse_lazy("mailing:home")
 
@@ -86,7 +86,7 @@ class MessageCreateView(CreateView):
 class MessageUpdateView(UpdateView):
     model = Message
     form_class = MessageForm
-    template_name = "mailing/message/message_update.html"
+    template_name = "mailing/message/message_form.html"
 
 
     def get_success_url(self):
@@ -189,3 +189,15 @@ class MailingUnitStopMailView(View):
         mailing_unit.finished_at = timezone.now()
         mailing_unit.save()
         return redirect("mailing:mailing-units-list")
+
+
+class MailingAttemptListView(ListView):
+    model = MailingAttempt
+    template_name = "mailing/mailing_attempts_list.html"
+    context_object_name = "mailing_attempts"
+    ordering = ["-attempt_at"]
+
+    def get_queryset(self):
+        mailing_id = self.kwargs.get("mailing_id")
+        return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
+

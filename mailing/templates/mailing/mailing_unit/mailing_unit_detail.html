@@ -19,22 +19,34 @@
             <li><a href="{% url 'mailing:mail-receiver-detail' receiver.pk %}">{{ receiver }}</a></li>
         {% endfor %}
     </ul>
+    <div class="row">
+    <div class="col-1">
     <p>Статус: {{ mailing_unit.status }}</p>
-
+        </div>
+    <div class="col-1">
+    <p><a href="{% url 'mailing:mailing-attempts-list' mailing_unit.pk %}">Посмотреть историю</a></p>
+    </div>
+    </div>
     {% if mailing_unit.status != 'Launched' %}
         <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Начать Рассылку</button>
         </form>
         {% else %}
+        <div class="row">
+        <div class="col-3">
         <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить Рассылку еще раз</button>
         </form>
+            </div>
+        <div class="col-2">
         <form action="{% url 'mailing:mailing-unit-stop-mail' mailing_unit.pk %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Завершить Рассылку</button>
         </form>
+        </div>
+            </div>
     {% endif %}
 
 
