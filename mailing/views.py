@@ -88,7 +88,6 @@ class MessageUpdateView(UpdateView):
     form_class = MessageForm
     template_name = "mailing/message/message_form.html"
 
-
     def get_success_url(self):
         return reverse_lazy("mailing:message-detail", kwargs={"pk": self.object.pk})
 
@@ -200,4 +199,3 @@ class MailingAttemptListView(ListView):
     def get_queryset(self):
         mailing_id = self.kwargs.get("mailing_id")
         return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
-

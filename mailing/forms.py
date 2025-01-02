@@ -22,7 +22,7 @@ class MailingUnitForm(forms.ModelForm):
 class MailReceiverForm(forms.ModelForm):
     class Meta:
         model = MailReceiver
-        fields = '__all__'
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(MailReceiverForm, self).__init__(*args, **kwargs)
@@ -34,7 +34,7 @@ class MailReceiverForm(forms.ModelForm):
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs)
