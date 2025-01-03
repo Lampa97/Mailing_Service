@@ -4,57 +4,71 @@
 
 {% block content %}
 
-    {% if mailing_unit.status == 'Launched' %}
-    <p>Запущена в: {{ mailing_unit.started_at }}</p>
-    {% elif mailing_unit.status == 'Finished' %}
-    <p>Завершена в: {{ mailing_unit.finished_at }}</p>
-    {% else %}
-    <p> Рассылка еще не была запущена </p>
-    {% endif %}
-
-    <p>Тема: <a href="{% url 'mailing:message-detail' mailing_unit.message.pk %}">{{ mailing_unit.message }}</a></p>
-    <p>Получатели: </p>
-    <ul>
-        {% for receiver in mailing_unit.receivers.all %}
-            <li><a href="{% url 'mailing:mail-receiver-detail' receiver.pk %}">{{ receiver }}</a></li>
-        {% endfor %}
-    </ul>
-    <div class="row">
-    <div class="col-1">
-    <p>Статус: {{ mailing_unit.status }}</p>
+<div class="card text-center">
+    <div class="card-header">
+        <h5>Тема: <a href="{% url 'mailing:message-detail' mailing_unit.message.pk %}">{{ mailing_unit.message }}</a>
+        </h5>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Получатели:</h5>
+        <p class="card-text">
+        <div class="list-group">
+            {% for receiver in mailing_unit.receivers.all %}
+            <a href="{% url 'mailing:mail-receiver-detail' receiver.pk %}"
+               class="list-group-item list-group-item-action" aria-current="true">
+                {{ receiver }}
+            </a>
+            {% endfor %}
         </div>
-    <div class="col-1">
-    <p><a href="{% url 'mailing:mailing-attempts-list' mailing_unit.pk %}">Посмотреть историю</a></p>
-    </div>
-    </div>
-    {% if mailing_unit.status != 'Launched' %}
-        <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Начать Рассылку</button>
-        </form>
+        {% if mailing_unit.status == 'Launched' %}
+        <h6>Статус: <span class="badge text-bg-success">{{ mailing_unit.status }}</span></h6>
+        {% elif mailing_unit.status == 'Created' %}
+        <h6>Статус: <span class="badge text-bg-info">{{ mailing_unit.status }}</span></h6>
         {% else %}
+        <h6>Статус: <span class="badge text-bg-danger">{{ mailing_unit.status }}</span></h6>
+        {% endif %}
+        <a href="{% url 'mailing:mailing-attempts-list' mailing_unit.pk %}" class="card-link">Посмотреть историю</a>
+    </div>
+    <div class="card-footer">
         <div class="row">
-        <div class="col-3">
-        <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить Рассылку еще раз</button>
-        </form>
+            <div class="col-6">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    {% if mailing_unit.status != 'Launched' %}
+
+                    <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Завершить Рассылку
+                        </button>
+
+                    </form>
+                    {% else %}
+                    <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить Рассылку еще
+                            раз
+                        </button>
+                    </form>
+
+
+                    <form action="{% url 'mailing:mailing-unit-stop-mail' mailing_unit.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg btn-block btn-danger">Завершить Рассылку</button>
+                    </form>
+                </div>
             </div>
-        <div class="col-2">
-        <form action="{% url 'mailing:mailing-unit-stop-mail' mailing_unit.pk %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Завершить Рассылку</button>
-        </form>
+            {% endif %}
+            <div class="col-6">
+                <a href="{% url 'mailing:mailing-unit-update' mailing_unit.pk %}">
+                    <button type="button" class="btn btn-md btn-block btn-outline-secondary">Редактировать</button>
+                </a>
+                <a href="{% url 'mailing:mailing-unit-delete' mailing_unit.pk %}">
+                    <button type="button" class="btn btn-md btn-block btn-outline-danger">Удалить</button>
+                </a>
+            </div>
         </div>
-            </div>
-    {% endif %}
+    </div>
+</div>
 
-
-<a href="{% url 'mailing:mailing-unit-update' mailing_unit.pk %}">
-    <button type="button" class="btn btn-lg btn-block btn-outline-secondary">Редактировать</button>
-</a>
-<a href="{% url 'mailing:mailing-unit-delete' mailing_unit.pk %}">
-    <button type="button" class="btn btn-lg btn-block btn-outline-danger">Удалить</button>
-</a>
 
 {% endblock %}
