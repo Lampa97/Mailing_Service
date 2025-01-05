@@ -4,12 +4,18 @@
 
 {% block content %}
 
-{% for message in messages %}
-
-    <p>Номер: {{ message.pk }}</p>
-    <p>Тема: <a href="{% url 'mailing:message-detail' message.pk %}">{{ message.title }}</a></p>
-    <p>Текст: {{ message.body|truncatechars:100 }}</p>
-
-{% endfor %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for message in messages %}
+    <div class="col">
+    <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><span class="badge text-bg-primary">Тема:</span> {{ message.title }}</h5>
+      <p class="card-text"><span class="badge text-bg-secondary">Текст:</span> <small class="text-body-secondary">{{ message.body|truncatechars:100 }}</small></p>
+        <a href="{% url 'mailing:message-detail' message.pk %}" class="btn btn-primary">Посмотреть</a>
+    </div>
+      </div>
+        </div>
+      {% endfor %}
+  </div>
 
 {% endblock %}

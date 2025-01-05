@@ -4,13 +4,21 @@
 
 {% block content %}
 
+<ul class="list-group list-group-flush">
+    {% for attempt in mailing_attempts %}
+    <li class="list-group-item">
+        <h4>Дата и время: <span class="badge text-bg-secondary">{{ attempt.attempt_at }}</span></h4>
+        {% if attempt.status == 'Success' %}
+        <h6>Статус: <span class="badge text-bg-success">{{ attempt.status }}</span></h6>
+        {% else %}
+        <h6>Статус: <span class="badge text-bg-danger">{{ attempt.status }}</span></h6>
+        {% endif %}
 
-{% for attempt in mailing_attempts %}
+        <h4>Ответ Сервера:</h4>
+        <p class="text-secondary">{{ attempt.server_answer }}</p>
 
-    <p>Дата и время: {{ attempt.attempt_at }}</p>
-    <p>Статус: {{ attempt.status }}</a></p>
-    <p>Ответ Сервера: {{ attempt.server_answer }}</p>
-
-{% endfor %}
+    </li>
+    {% endfor %}
+</ul>
 
 {% endblock %}
