@@ -1,0 +1,23 @@
+{% extends "mailing/base.html" %}
+
+{% block title %} Все сообщения {% endblock %}
+
+{% block content %}
+<ul class="list-group list-group-flush">
+{% for mailing_unit in mailing_units %}
+    <li class="list-group-item">
+    <h4>Тема: <span class="badge text-bg-secondary">{{ mailing_unit.message }}</span></h4>
+        {% if mailing_unit.status == 'Launched' %}
+        <h6>Статус: <span class="badge text-bg-success">{{ mailing_unit.status }}</span></h6>
+        {% elif mailing_unit.status == 'Created' %}
+        <h6>Статус: <span class="badge text-bg-info">{{ mailing_unit.status }}</span></h6>
+        {% else %}
+        <h6>Статус: <span class="badge text-bg-danger">{{ mailing_unit.status }}</span></h6>
+        {% endif %}
+    <a href="{% url 'mailing:mailing-unit-detail' mailing_unit.pk %}">
+        <button type="button" class="btn btn-lg btn-block btn-outline-info">Посмотреть</button>
+    </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -4,11 +4,19 @@
 
 {% block content %}
 
-{% for mail_receiver in mail_receivers %}
-
-    <p>Ф.И.О: {{ mail_receiver.full_name }}</p>
-    <p>Email: {{ mail_receiver.email }}</p>
-    <p>Комментарий: {{ mail_receiver.comment }}</p>
-{% endfor %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for mail_receiver in mail_receivers %}
+    <div class="col">
+    <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><span class="badge text-bg-primary">Ф.И.О:</span> {{ mail_receiver.full_name }}</h5>
+      <p class="card-text"><span class="badge text-bg-info">Email: </span> {{ mail_receiver.email }}</p>
+      <p class="card-text"><span class="badge text-bg-secondary">Комментарий:</span> <small class="text-body-secondary">{{ mail_receiver.comment|truncatechars:100 }}</small></p>
+        <a href="{% url 'mailing:mail-receiver-detail' mail_receiver.pk %}" class="btn btn-primary">Посмотреть</a>
+    </div>
+      </div>
+        </div>
+      {% endfor %}
+  </div>
 
 {% endblock %}

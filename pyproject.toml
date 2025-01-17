@@ -15,6 +15,7 @@ psycopg2-binary = "^2.9.10"
 ipython = "^8.31.0"
 pillow = "^11.0.0"
 python-dotenv = "^1.0.1"
+django-apscheduler = "^0.7.0"
 
 
 [tool.poetry.group.lint.dependencies]
