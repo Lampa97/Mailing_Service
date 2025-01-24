@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %} Logout {% endblock %}
+
+{% block content %}
+<h2> Вы вышли из системы </h2>
+<p>Если хотите войти снова, нажмите на кнопку снизу</p>
+<a href="{% url 'users:login' %}"><button class="btn btn-primary">Войти</button></a>
+{% endblock %}
+
