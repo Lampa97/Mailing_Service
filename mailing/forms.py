@@ -22,7 +22,7 @@ class MailingUnitForm(forms.ModelForm):
 class MailReceiverForm(forms.ModelForm):
     class Meta:
         model = MailReceiver
-        fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super(MailReceiverForm, self).__init__(*args, **kwargs)
