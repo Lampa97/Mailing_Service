@@ -13,6 +13,9 @@ class CustomUser(AbstractUser):
         verbose_name = "User"
         verbose_name_plural = "Users"
         ordering = ["email",]
+        permissions = [
+            ("can_block_user", "Can block user")
+        ]
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

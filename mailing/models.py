@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import CustomUser
+
 
 class MailReceiver(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
@@ -40,6 +42,10 @@ class MailingUnit(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Created", verbose_name="Статус")
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name="message", verbose_name="Тема")
     receivers = models.ManyToManyField(MailReceiver, related_name="mailing_units", verbose_name="Получатели")
+    owner = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="mailing_units", null=True, blank=True
+    )
+
 
     def __str__(self):
         return f"{self.message}: {self.status}"
@@ -48,6 +54,9 @@ class MailingUnit(models.Model):
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         ordering = ["-status", "started_at"]
+        permissions = [
+            ("can_disable_mailing", "Can disable mailing")
+        ]
 
 
 class MailingAttempt(models.Model):
