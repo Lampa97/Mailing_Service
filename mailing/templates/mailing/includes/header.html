@@ -10,6 +10,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'mailing:home' %}">Главная</a>
                 </li>
+                {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
@@ -32,6 +33,7 @@
                         <li><a class="dropdown-item" href="{% url 'mailing:message-create' %}">Сообщение</a></li>
                     </ul>
                 </li>
+                {% endif %}
             </ul>
           {% if user.is_authenticated %}
           <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
