@@ -30,7 +30,7 @@ class RegisterView(FormView):
 
     def send_welcome_email(self, user_email):
         subject = "Поздравляем с регистрацией!"
-        message = """Примите наши поздравления с регистрацией в нашем сервисе! 
+        message = """Примите наши поздравления с регистрацией в нашем сервисе!
         Теперь вы можете просматривать продукты и управлять ими"""
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [user_email]

@@ -49,7 +49,6 @@ class MailingUnit(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="mailing_units", null=True, blank=True
     )
 
-
     def __str__(self):
         return f"{self.message}: {self.status}"
 
@@ -57,9 +56,7 @@ class MailingUnit(models.Model):
         verbose_name = "Mailing Unit"
         verbose_name_plural = "Mailing Units"
         ordering = ["-status", "started_at"]
-        permissions = [
-            ("can_disable_mailing", "Can disable mailing")
-        ]
+        permissions = [("can_disable_mailing", "Can disable mailing")]
 
 
 class MailingAttempt(models.Model):

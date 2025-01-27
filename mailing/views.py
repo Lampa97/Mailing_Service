@@ -1,5 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.mail import BadHeaderError, send_mail
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,7 +14,7 @@ from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 class MailingView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.has_perm('view_mailingunit'):
+        if request.user.has_perm("view_mailingunit"):
             all_mailings = MailingUnit.objects.all().count()
             launched_mailings = MailingUnit.objects.filter(status="Launched").count()
             unique_receivers = MailReceiver.objects.all().count()
