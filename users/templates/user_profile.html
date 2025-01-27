@@ -1,22 +1,45 @@
 {% extends "base.html" %}
+{% load my_tags %}
 
-{% block title %} Profile: {{ user.email }} {% endblock %}
+{% block title %} Profile: {{ user_profile.email }} {% endblock %}
 
 {% block content %}
 
 <div class="card text-center">
-    <img src="..." class="card-img-top" alt="...">
-  <div class="card-header">
-    Featured
-  </div>
-  <div class="card-body">
-    <h5 class="card-title">Special title treatment</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-  <div class="card-footer text-body-secondary">
-    2 days ago
-  </div>
+    <img src="{{ user_profile.avatar | media_filter }}" class="card-img-top mx-auto"
+         style="width: 300px; height: 300px; object-fit: cover;" alt="...">
+    <div class="card-header">
+        <h3> {{user_profile.email}} </h3>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            {% if user_profile.is_active %}
+            User status: <span class="text-success">Active</span>
+            {% else %}
+            User status: <span class="text-danger">Blocked</span>
+            {% endif %}
+        </h5>
+        <ul class="list-group">
+            <li class="list-group-item">Country: {{ user_profile.country }}</li>
+            <li class="list-group-item">Phone number: {{ user_profile.phone_number }}</li>
+        </ul>
+        {% if user.email == user_profile.email %}
+        <a href="{% url 'users:edit-profile' user_profile.pk %}" class="btn btn-secondary">Edit profile</a>
+        {% endif %}
+        {% if perms.can_block_user %}
+        <form action="{% url 'users:change-status' user_profile.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            {% if user_profile.is_active %}
+            <button type="submit" class="btn btn-danger">Block user</button>
+        {% else %}
+            <button type="submit" class="btn btn-success">Unblock user</button>
+        </form>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="card-footer text-body-secondary">
+        Joined: {{ user_profile.date_joined|date:"d.m.Y" }}
+    </div>
 </div>
 
 {% endblock %}
