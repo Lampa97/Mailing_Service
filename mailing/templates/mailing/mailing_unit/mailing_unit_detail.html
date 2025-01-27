@@ -38,13 +38,14 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-lg btn-block btn-outline-primary">
                             {% if mailing_unit.status != 'Launched' %}
-                                Начать Рассылку
+                            Начать Рассылку
                             {% else %}
-                                Отправить Рассылку еще раз
+                            Отправить Рассылку еще раз
                             {% endif %}
                         </button>
                     </form>
-                    {% if mailing_unit.status == 'Launched' and mailing_unit.owner == user or perms.mailing_unit.can_disable_mailing %}
+                    {% if mailing_unit.status == 'Launched' and mailing_unit.owner == user or
+                    perms.mailing_unit.can_disable_mailing %}
                     <form action="{% url 'mailing:mailing-unit-stop-mail' mailing_unit.pk %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-lg btn-block btn-danger">Завершить Рассылку</button>

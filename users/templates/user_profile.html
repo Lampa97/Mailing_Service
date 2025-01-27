@@ -31,7 +31,7 @@
             {% csrf_token %}
             {% if user_profile.is_active %}
             <button type="submit" class="btn btn-danger">Block user</button>
-        {% else %}
+            {% else %}
             <button type="submit" class="btn btn-success">Unblock user</button>
         </form>
         {% endif %}

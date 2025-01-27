@@ -5,26 +5,27 @@
 {% block content %}
 
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
     </div>
+    {% endfor %}
+</div>
 {% endif %}
 
 <div class="list-group">
-  {% for user in users %}
-  <li class="list-group-item">
-  <a href="{% url 'users:user-profile' user.pk %}" class="list-group-item list-group-item-action">{{ user.email }}</a>
-  {% if user.is_active %}
-  Status:  <span class="text-success">Active</span>
-  {% else %}
-  Status:  <span class="text-danger">Blocked</span>
-  {% endif %}
+    {% for user in users %}
+    <li class="list-group-item">
+        <a href="{% url 'users:user-profile' user.pk %}" class="list-group-item list-group-item-action">{{ user.email
+            }}</a>
+        {% if user.is_active %}
+        Status: <span class="text-success">Active</span>
+        {% else %}
+        Status: <span class="text-danger">Blocked</span>
+        {% endif %}
     </li>
-  {% endfor %}
+    {% endfor %}
 </div>
 
 {% endblock %}

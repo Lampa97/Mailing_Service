@@ -4,6 +4,10 @@
 
 {% block content %}
 
+{% if mailing_attempts|length == 0 %}
+<h4>No mailings were sent</h4>
+{% endif %}
+
 <ul class="list-group list-group-flush">
     {% for attempt in mailing_attempts %}
     <li class="list-group-item">

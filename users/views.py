@@ -1,15 +1,17 @@
-from django.views.generic import ListView, DetailView, UpdateView, View
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
-from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
-from .models import CustomUser
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import CustomUserCreationForm
 from django.shortcuts import redirect
-from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, ListView, UpdateView, View
+from django.views.generic.edit import FormView
+
+from .forms import CustomUserCreationForm, EditProfileForm
+from .models import CustomUser
+
 
 class CustomLoginView(LoginView):
     template_name = "login.html"
@@ -42,8 +44,8 @@ class RegisterView(FormView):
 
 class EditProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomUser
+    form_class = EditProfileForm
     template_name = "edit_profile.html"
-    fields = ["country", "phone_number", "avatar"]
 
     def get_success_url(self):
         return reverse_lazy("users:user-profile", kwargs={"pk": self.object.pk})
@@ -74,7 +76,3 @@ class ChangeUserStatusView(PermissionRequiredMixin, View):
         user.is_active = not user.is_active
         user.save()
         return redirect("users:all-users")
-
-
-
-

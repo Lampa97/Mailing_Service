@@ -37,6 +37,11 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
     template_name = "mailing/mail_receiver/mail_receivers_list.html"
     context_object_name = "mail_receivers"
 
+    def get_queryset(self):
+        if self.request.user.has_perm("view_mailreceiver"):
+            return MailReceiver.objects.all()
+        return MailReceiver.objects.filter(owner=self.request.user)
+
 
 class MailReceiverDetailView(LoginRequiredMixin, DetailView):
     model = MailReceiver
@@ -78,6 +83,9 @@ class MessageListView(LoginRequiredMixin, ListView):
     template_name = "mailing/message/messages_list.html"
     context_object_name = "messages"
 
+    def get_queryset(self):
+        return Message.objects.filter(owner=self.request.user)
+
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
@@ -117,6 +125,11 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_units_list.html"
     context_object_name = "mailing_units"
+
+    def get_queryset(self):
+        if self.request.user.has_perm("view_mailingunit"):
+            return MailingUnit.objects.all()
+        return MailingUnit.objects.filter(owner=self.request.user)
 
 
 class MailingUnitDetailView(LoginRequiredMixin, DetailView):
