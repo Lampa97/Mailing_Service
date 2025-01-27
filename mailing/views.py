@@ -150,7 +150,7 @@ class MailingUnitDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mailing:mailing-units-list")
 
 
-class MailingUnitSendMailView(View, LoginRequiredMixin):
+class MailingUnitSendMailView(LoginRequiredMixin, View):
     model = MailingUnit
     context_object_name = "mailing_unit"
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -195,7 +195,7 @@ class MailingUnitSendMailView(View, LoginRequiredMixin):
             mailing_unit.save()
 
 
-class MailingUnitStopMailView(View, LoginRequiredMixin):
+class MailingUnitStopMailView(LoginRequiredMixin, View):
     model = MailingUnit
     context_object_name = "mailing_unit"
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -208,12 +208,20 @@ class MailingUnitStopMailView(View, LoginRequiredMixin):
         return redirect("mailing:mailing-units-list")
 
 
-class MailingAttemptListView(ListView, LoginRequiredMixin):
+class MailingAttemptListView(LoginRequiredMixin, ListView):
     model = MailingAttempt
     template_name = "mailing/mailing_attempts_list.html"
     context_object_name = "mailing_attempts"
     ordering = ["-attempt_at"]
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.get_queryset().exists():
+            context["message"] = self.get_queryset().first().mailing.message
+        return context
+
     def get_queryset(self):
         mailing_id = self.kwargs.get("mailing_id")
-        return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
+        if mailing_id:
+            return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
+        return MailingAttempt.objects.filter(mailing__owner=self.request.user).order_by("-attempt_at")

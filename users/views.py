@@ -1,10 +1,12 @@
+from django.views.generic import ListView, DetailView
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
-
+from .models import CustomUser
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .forms import CustomUserCreationForm
 
 
@@ -35,3 +37,21 @@ class RegisterView(FormView):
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list)
+
+
+class UsersListView(PermissionRequiredMixin, ListView):
+    permission_required = "user.view_user"
+    model = CustomUser
+    template_name = "all_users.html"
+    context_object_name = "users"
+    queryset = CustomUser.objects.all().order_by("id")
+
+
+class UserProfileDetailView(DetailView):
+    model = CustomUser
+    template_name = "user_profile.html"
+    context_object_name = "user"
+
+
+
+

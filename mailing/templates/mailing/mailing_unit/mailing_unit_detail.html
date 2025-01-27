@@ -8,6 +8,7 @@
     <div class="card-header">
         <h5>Тема: <a href="{% url 'mailing:message-detail' mailing_unit.message.pk %}">{{ mailing_unit.message }}</a>
         </h5>
+        <h6>Owner: {{ mailing_unit.owner }}</h6>
     </div>
     <div class="card-body">
         <h5 class="card-title">Получатели:</h5>

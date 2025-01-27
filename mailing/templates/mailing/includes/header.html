@@ -33,10 +33,19 @@
                         <li><a class="dropdown-item" href="{% url 'mailing:message-create' %}">Сообщение</a></li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'mailing:all-mailing-attempts-list' %}">История
+                        рассылок</a>
+                </li>
+                <li class="nav-item">
+                    {% if perms.view_user %}
+                    <a class="nav-link active text-light bg-dark" aria-current="page" href="{% url 'users:all-users' %}">See all users</a>
+                    {% endif %}
+                </li>
                 {% endif %}
             </ul>
-          {% if user.is_authenticated %}
-          <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="p-2 btn btn-outline-danger">Выход</button>
             </form>
@@ -44,10 +53,7 @@
             <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
             <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Вход</a>
             {% endif %}
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+
         </div>
     </div>
 </nav>

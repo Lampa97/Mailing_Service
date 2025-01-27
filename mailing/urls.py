@@ -28,4 +28,5 @@ urlpatterns = [
     path(
         "mailing-attempts-list/<int:mailing_id>", views.MailingAttemptListView.as_view(), name="mailing-attempts-list"
     ),
+    path("all-mailing-attempts-list/", views.MailingAttemptListView.as_view(), name="all-mailing-attempts-list" )
 ]
