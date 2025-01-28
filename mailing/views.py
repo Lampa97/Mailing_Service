@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
+from users.models import CustomUser
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 
@@ -238,3 +239,29 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
         if mailing_id:
             return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
         return MailingAttempt.objects.filter(mailing__owner=self.request.user).order_by("-attempt_at")
+
+
+class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
+
+    permission_required = "mailing.can_view_report"
+
+    def get(self, request):
+        users = CustomUser.objects.all()
+        user_attempts = []
+
+        for user in users:
+            total_attempts = MailingAttempt.objects.filter(mailing__owner=user).count()
+            successful_attempts = MailingAttempt.objects.filter(mailing__owner=user, status="Success").count()
+            failed_attempts = MailingAttempt.objects.filter(mailing__owner=user, status="Failed").count()
+            user_attempts.append({
+                "user": user,
+                "total_attempts": total_attempts,
+                "successful_attempts": successful_attempts,
+                "failed_attempts": failed_attempts,
+            })
+
+        context = {
+            "user_attempts": user_attempts,
+        }
+
+        return render(request, "mailing/reports.html", context)

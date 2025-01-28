@@ -20,8 +20,7 @@
                         <li><a class="dropdown-item" href="{% url 'mailing:mail-receivers-list' %}">Получатели</a></li>
                         <li><a class="dropdown-item" href="{% url 'mailing:mailing-units-list' %}">Рассылки</a></li>
                         <li><a class="dropdown-item" href="{% url 'mailing:messages-list' %}">Сообщения</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:all-mailing-attempts-list' %}">История
-                            рассылок</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:all-mailing-attempts-list' %}">История рассылок</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -41,8 +40,14 @@
                 </li>
                 <li class="nav-item">
                     {% if perms.users.view_customuser %}
-                    <a class="nav-link active text-light bg-dark" aria-current="page"
+                    <a class="nav-link active text-light bg-dark me-2" aria-current="page"
                        href="{% url 'users:all-users' %}">See all users</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if perms.mailing.can_view_report %}
+                    <a class="nav-link active text-light bg-dark" aria-current="page"
+                       href="{% url 'mailing:report' %}">See report</a>
                     {% endif %}
                 </li>
                 {% endif %}

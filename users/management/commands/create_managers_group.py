@@ -12,12 +12,14 @@ class Command(BaseCommand):
         view_mailing_unit_permission = Permission.objects.get(codename="view_mailingunit")
         view_user_permission = Permission.objects.get(codename="view_customuser")
         view_mail_receiver = Permission.objects.get(codename="view_mailreceiver")
+        view_report = Permission.objects.get(codename="can_view_report")
         managers_group.permissions.add(
             block_user_permission,
             disable_mailing_permission,
             view_mailing_unit_permission,
             view_user_permission,
             view_mail_receiver,
+            view_report,
         )
 
         self.stdout.write(self.style.SUCCESS(f"Successfully created Group {managers_group.name}"))

@@ -82,3 +82,4 @@ class MailingAttempt(models.Model):
             "mailing",
             "status",
         ]
+        permissions = [("can_view_report", "Can view report")]

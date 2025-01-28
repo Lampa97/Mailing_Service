@@ -51,7 +51,7 @@ class EditProfileUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy("users:user-profile", kwargs={"pk": self.object.pk})
 
 
-class UsersListView(PermissionRequiredMixin, ListView):
+class UsersListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = "users.view_customuser"
     model = CustomUser
     template_name = "all_users.html"
