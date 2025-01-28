@@ -8,7 +8,7 @@
 {% endif %}
 <ul class="list-group list-group-flush">
     {% for mailing_unit in mailing_units %}
-    {% if mailing_unit.owner == user or perms.mailing_unit.view_mailingunit%}
+    {% if mailing_unit.owner == user or perms.mailing.view_mailingunit%}
     <li class="list-group-item">
         <h4>Тема: <span class="badge text-bg-secondary">{{ mailing_unit.message }}</span></h4>
         {% if mailing_unit.status == 'Launched' %}
@@ -18,7 +18,7 @@
         {% else %}
         <h6>Статус: <span class="badge text-bg-danger">{{ mailing_unit.status }}</span></h6>
         {% endif %}
-        {% if perms.view_mailingunit %}
+        {% if perms.mailing.view_mailingunit %}
         <h6>Created by: <a href="{% url 'users:user-profile' mailing_unit.owner.pk %}">{{mailing_unit.owner}}</a></h6>
         {% endif %}
         <a href="{% url 'mailing:mailing-unit-detail' mailing_unit.pk %}">

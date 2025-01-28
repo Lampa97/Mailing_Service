@@ -34,6 +34,7 @@
         <div class="row">
             <div class="col-6">
                 <div class="btn-group" role="group" aria-label="Basic example">
+                    {% if mailing_unit.owner == user %}
                     <form action="{% url 'mailing:mailing-unit-send-mail' mailing_unit.pk %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-lg btn-block btn-outline-primary">
@@ -44,8 +45,8 @@
                             {% endif %}
                         </button>
                     </form>
-                    {% if mailing_unit.status == 'Launched' and mailing_unit.owner == user or
-                    perms.mailing_unit.can_disable_mailing %}
+                    {% endif %}
+                    {% if mailing_unit.status == 'Launched' and mailing_unit.owner == user or perms.mailing.can_disable_mailing %}
                     <form action="{% url 'mailing:mailing-unit-stop-mail' mailing_unit.pk %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-lg btn-block btn-danger">Завершить Рассылку</button>

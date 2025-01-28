@@ -14,7 +14,7 @@ from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 class MailingView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.has_perm("view_mailingunit"):
+        if request.user.has_perm("mailing.view_mailingunit"):
             all_mailings = MailingUnit.objects.all().count()
             launched_mailings = MailingUnit.objects.filter(status="Launched").count()
             unique_receivers = MailReceiver.objects.all().count()
@@ -38,7 +38,7 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
     context_object_name = "mail_receivers"
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_mailreceiver"):
+        if self.request.user.has_perm("mailing.view_mailreceiver"):
             return MailReceiver.objects.all()
         return MailReceiver.objects.filter(owner=self.request.user)
 
@@ -127,7 +127,7 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
     context_object_name = "mailing_units"
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_mailingunit"):
+        if self.request.user.has_perm("mailing.view_mailingunit"):
             return MailingUnit.objects.all()
         return MailingUnit.objects.filter(owner=self.request.user)
 

@@ -12,6 +12,7 @@
         <h3> {{user_profile.email}} </h3>
     </div>
     <div class="card-body">
+        {% if perms.users.can_block_user %}
         <h5 class="card-title">
             {% if user_profile.is_active %}
             User status: <span class="text-success">Active</span>
@@ -19,6 +20,7 @@
             User status: <span class="text-danger">Blocked</span>
             {% endif %}
         </h5>
+        {% endif %}
         <ul class="list-group">
             <li class="list-group-item">Country: {{ user_profile.country }}</li>
             <li class="list-group-item">Phone number: {{ user_profile.phone_number }}</li>
@@ -26,7 +28,7 @@
         {% if user.email == user_profile.email %}
         <a href="{% url 'users:edit-profile' user_profile.pk %}" class="btn btn-secondary">Edit profile</a>
         {% endif %}
-        {% if perms.can_block_user %}
+        {% if perms.users.can_block_user %}
         <form action="{% url 'users:change-status' user_profile.pk %}" method="post" style="display:inline;">
             {% csrf_token %}
             {% if user_profile.is_active %}

@@ -52,7 +52,7 @@ class EditProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class UsersListView(PermissionRequiredMixin, ListView):
-    permission_required = "users.view_user"
+    permission_required = "users.view_customuser"
     model = CustomUser
     template_name = "all_users.html"
     context_object_name = "users"

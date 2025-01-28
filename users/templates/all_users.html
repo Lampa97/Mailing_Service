@@ -17,8 +17,7 @@
 <div class="list-group">
     {% for user in users %}
     <li class="list-group-item">
-        <a href="{% url 'users:user-profile' user.pk %}" class="list-group-item list-group-item-action">{{ user.email
-            }}</a>
+        <a href="{% url 'users:user-profile' user.pk %}" class="list-group-item list-group-item-action">{{ user.email }}</a>
         {% if user.is_active %}
         Status: <span class="text-success">Active</span>
         {% else %}

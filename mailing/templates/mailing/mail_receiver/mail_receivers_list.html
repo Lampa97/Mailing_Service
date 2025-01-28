@@ -9,7 +9,7 @@
     <h4>No mail receivers created</h4>
     {% endif %}
     {% for mail_receiver in mail_receivers %}
-    {% if mail_receiver.owner == user or perms.mailing_unit.view_mailreceiver%}
+    {% if mail_receiver.owner == user or perms.mailing.view_mailreceiver%}
     <div class="col">
     <div class="card">
     <div class="card-body">
@@ -17,7 +17,7 @@
       <p class="card-text"><span class="badge text-bg-info">Email: </span> {{ mail_receiver.email }}</p>
       <p class="card-text"><span class="badge text-bg-secondary">Комментарий:</span> <small class="text-body-secondary">{{ mail_receiver.comment|truncatechars:100 }}</small></p>
         <a href="{% url 'mailing:mail-receiver-detail' mail_receiver.pk %}" class="btn btn-primary">Посмотреть</a>
-        {% if perms.view_mailreceiver %}
+        {% if perms.mailing.view_mailreceiver %}
         <div class="card-footer">
             Created by: <a href="{% url 'users:user-profile' mail_receiver.owner.pk %}">{{mail_receiver.owner}}</a>
             </div>
