@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Удалить Рассылку{% endblock %}
+{% block title %}Delete mailing{% endblock %}
 
 {% block content %}
 <body>
 <div class="container mt-5">
-    <h1 class="mb-4">Удалить Рассылку</h1>
-    <p>Вы уверены, что хотите удалить эту рассылку?</p>
+    <h1 class="mb-4">Delete mailing</h1>
+    <p>Are you sure you want to delete mailing?</p>
     <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Удалить</button>
-        <a href="{% url 'mailing:mailing-units-list' %}" class="btn btn-secondary">Отмена</a>
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'mailing:mailing-units-list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

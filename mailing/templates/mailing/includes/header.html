@@ -8,30 +8,30 @@
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'mailing:home' %}">Главная</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'mailing:home' %}">Home</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        Посмотреть
+                        Lookup
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'mailing:mail-receivers-list' %}">Получатели</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:mailing-units-list' %}">Рассылки</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:messages-list' %}">Сообщения</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:all-mailing-attempts-list' %}">История рассылок</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:mail-receivers-list' %}">Mail Receivers</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:mailing-units-list' %}">Mailings</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:messages-list' %}">Messages</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:all-mailing-attempts-list' %}">Mailing History</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        Добавить
+                        Add
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'mailing:mail-receiver-create' %}">Получатель</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:mailing-unit-create' %}">Рассылка</a></li>
-                        <li><a class="dropdown-item" href="{% url 'mailing:message-create' %}">Сообщение</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:mail-receiver-create' %}">Mail Receiver</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:mailing-unit-create' %}">Mailing</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mailing:message-create' %}">Message</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -59,11 +59,11 @@
 
             <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="p-2 btn btn-outline-danger">Выход</button>
+                <button type="submit" class="p-2 btn btn-outline-danger">Logout</button>
             </form>
             {% else %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Вход</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Signup</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Login</a>
             {% endif %}
 
         </div>
