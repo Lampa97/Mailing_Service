@@ -10,6 +10,7 @@ from django.views.generic import DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from .services import CustomUserService
 
 from .forms import CustomUserCreationForm, EditProfileForm
 from .models import CustomUser
@@ -58,9 +59,9 @@ class UsersListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = CustomUser
     template_name = "all_users.html"
     context_object_name = "users"
-    queryset = CustomUser.objects.all().order_by("id")
+    queryset = CustomUserService.get_all_users().order_by("id")
 
-
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class UserProfileDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
     template_name = "user_profile.html"
