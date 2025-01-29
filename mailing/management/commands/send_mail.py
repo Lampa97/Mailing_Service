@@ -20,14 +20,13 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--message",
-            nargs="+",
             type=str,
             help="Text of the message to send",
         )
 
     def handle(self, *args, **kwargs):
         title = kwargs["title"]
-        message = kwargs.get("message")
+        message = kwargs["message"]
         recipients = kwargs.get("recipients")
         self.__send_emails(title, message, recipients)
 
