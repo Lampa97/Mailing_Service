@@ -61,7 +61,7 @@ class UsersListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     context_object_name = "users"
     queryset = CustomUserService.get_all_users().order_by("id")
 
-@method_decorator(cache_page(60 * 15), name="dispatch")
+
 class UserProfileDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
     template_name = "user_profile.html"

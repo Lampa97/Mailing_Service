@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% load my_tags %}
-
+{% load cache %}
 {% block title %} Profile: {{ user_profile.email }} {% endblock %}
 
 {% block content %}
 
 <div class="card text-center">
+    {% cache 900 user_header %}
     <img src="{{ user_profile.avatar | media_filter }}" class="card-img-top mx-auto"
          style="width: 300px; height: 300px; object-fit: cover;" alt="...">
     <div class="card-header">
         <h3> {{user_profile.email}} </h3>
     </div>
     <div class="card-body">
+        {% endcache %}
         {% if perms.users.can_block_user %}
         <h5 class="card-title">
             {% if user_profile.is_active %}
@@ -21,6 +23,7 @@
             {% endif %}
         </h5>
         {% endif %}
+        {% cache 900 user_info %}
         <ul class="list-group">
             <li class="list-group-item">Country: {{ user_profile.country }}</li>
             <li class="list-group-item">Phone number: {{ user_profile.phone_number }}</li>
@@ -28,6 +31,7 @@
         {% if user.email == user_profile.email %}
         <a href="{% url 'users:edit-profile' user_profile.pk %}" class="btn btn-secondary">Edit profile</a>
         {% endif %}
+        {% endcache %}
         {% if perms.users.can_block_user %}
         <form action="{% url 'users:change-status' user_profile.pk %}" method="post" style="display:inline;">
             {% csrf_token %}

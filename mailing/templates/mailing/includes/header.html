@@ -46,13 +46,17 @@
                 </li>
                 <li class="nav-item">
                     {% if perms.mailing.can_view_report %}
-                    <a class="nav-link active text-light bg-dark" aria-current="page"
+                    <a class="nav-link active text-light bg-dark me-2" aria-current="page"
                        href="{% url 'mailing:report' %}">See report</a>
                     {% endif %}
+                </li>
+                <li class="nav-item">
+                    <p>Welcome, {{ user }}!</p>
                 </li>
                 {% endif %}
             </ul>
             {% if user.is_authenticated %}
+
             <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="p-2 btn btn-outline-danger">Выход</button>
