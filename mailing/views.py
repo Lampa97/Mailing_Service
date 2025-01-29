@@ -6,6 +6,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from .services import MailingUnitService, MailReceiverService, MailingAttemptService, MessageService
 
 from users.models import CustomUser
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
@@ -16,13 +19,15 @@ class MailingView(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.user.has_perm("mailing.view_mailingunit"):
-            all_mailings = MailingUnit.objects.all().count()
-            launched_mailings = MailingUnit.objects.filter(status="Launched").count()
-            unique_receivers = MailReceiver.objects.all().count()
+            all_mailings = MailingUnitService.get_all_mailing_units().count()
+            launched_mailings = MailingUnitService.get_all_launched_mailing_units().count()
+            unique_receivers = MailReceiverService.get_all_mail_receivers().count()
         else:
-            all_mailings = MailingUnit.objects.filter(owner_id=request.user.id).count()
-            launched_mailings = MailingUnit.objects.filter(status="Launched", owner_id=request.user.id).count()
-            unique_receivers = MailReceiver.objects.filter(owner_id=request.user.id).count()
+            all_mailings = MailingUnitService.get_owner_mailing_units(request.user.id).count()
+            print(all_mailings)
+            launched_mailings = MailingUnitService.get_owner_launched_mailing_units(request.user.id).count()
+            unique_receivers = MailReceiverService.get_owner_mail_receivers(request.user.id).count()
+            print(unique_receivers)
 
         context = {
             "all_mailings": all_mailings,
@@ -40,10 +45,10 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.has_perm("mailing.view_mailreceiver"):
-            return MailReceiver.objects.all()
-        return MailReceiver.objects.filter(owner=self.request.user)
+            return MailReceiverService.get_all_mail_receivers()
+        return MailReceiverService.get_owner_mail_receivers(self.request.user.id)
 
-
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class MailReceiverDetailView(LoginRequiredMixin, DetailView):
     model = MailReceiver
     template_name = "mailing/mail_receiver/mail_receiver_detail.html"
@@ -85,9 +90,9 @@ class MessageListView(LoginRequiredMixin, ListView):
     context_object_name = "messages"
 
     def get_queryset(self):
-        return Message.objects.filter(owner=self.request.user)
+        return MessageService.get_owner_messages(self.request.user.id)
 
-
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = "mailing/message/message_detail.html"
@@ -129,10 +134,10 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.has_perm("mailing.view_mailingunit"):
-            return MailingUnit.objects.all()
-        return MailingUnit.objects.filter(owner=self.request.user)
+            return MailingUnitService.get_all_mailing_units()
+        return MailingUnitService.get_owner_mailing_units(self.request.user.id)
 
-
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class MailingUnitDetailView(LoginRequiredMixin, DetailView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -192,14 +197,14 @@ class MailingUnitSendMailView(LoginRequiredMixin, View):
                 return self.handle_exception(str(e), receiver, mailing_unit)
             else:
                 MailingAttempt.objects.create(
-                    mailing=mailing_unit, status="Success", server_answer=f"Email успешно отправлен для {receiver}"
+                    mailing=mailing_unit, status="Success", server_answer=f"Email sent to {receiver}"
                 )
 
     def handle_exception(self, error_message, receiver, mailing_unit):
         MailingAttempt.objects.create(
             mailing=mailing_unit,
             status="Failed",
-            server_answer=f'Возникла ошибка: "{error_message}" при отправке на {receiver}',
+            server_answer=f'Error occured: "{error_message}" when sending to {receiver}',
         )
         return HttpResponse(error_message)
 
@@ -237,8 +242,8 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         mailing_id = self.kwargs.get("mailing_id")
         if mailing_id:
-            return MailingAttempt.objects.filter(mailing=mailing_id).order_by("-attempt_at")
-        return MailingAttempt.objects.filter(mailing__owner=self.request.user).order_by("-attempt_at")
+            return MailingAttemptService.get_mailing_attempts_by_mailing(mailing_id).order_by("-attempt_at")
+        return MailingAttemptService.get_mailing_attempts_by_owner(self.request.user).order_by("-attempt_at")
 
 
 class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -250,9 +255,9 @@ class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
         user_attempts = []
 
         for user in users:
-            total_attempts = MailingAttempt.objects.filter(mailing__owner=user).count()
-            successful_attempts = MailingAttempt.objects.filter(mailing__owner=user, status="Success").count()
-            failed_attempts = MailingAttempt.objects.filter(mailing__owner=user, status="Failed").count()
+            total_attempts = MailingAttemptService.get_mailing_attempts_by_owner(user).count()
+            successful_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Success").count()
+            failed_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Failed").count()
             user_attempts.append({
                 "user": user,
                 "total_attempts": total_attempts,
