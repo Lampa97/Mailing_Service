@@ -19,15 +19,13 @@ class MailingView(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.user.has_perm("mailing.view_mailingunit"):
-            all_mailings = MailingUnitService.get_all_mailing_units().count()
-            launched_mailings = MailingUnitService.get_all_launched_mailing_units().count()
-            unique_receivers = MailReceiverService.get_all_mail_receivers().count()
+            all_mailings = MailingUnitService.get_all_mailing_units(count=True)
+            launched_mailings = MailingUnitService.get_all_launched_mailing_units(count=True)
+            unique_receivers = MailReceiverService.get_all_mail_receivers(count=True)
         else:
-            all_mailings = MailingUnitService.get_owner_mailing_units(request.user.id).count()
-            print(all_mailings)
-            launched_mailings = MailingUnitService.get_owner_launched_mailing_units(request.user.id).count()
-            unique_receivers = MailReceiverService.get_owner_mail_receivers(request.user.id).count()
-            print(unique_receivers)
+            all_mailings = MailingUnitService.get_owner_mailing_units(request.user.id, count=True)
+            launched_mailings = MailingUnitService.get_owner_launched_mailing_units(request.user.id, count=True)
+            unique_receivers = MailReceiverService.get_owner_mail_receivers(request.user.id, count=True)
 
         context = {
             "all_mailings": all_mailings,
@@ -255,9 +253,9 @@ class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
         user_attempts = []
 
         for user in users:
-            total_attempts = MailingAttemptService.get_mailing_attempts_by_owner(user).count()
-            successful_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Success").count()
-            failed_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Failed").count()
+            total_attempts = MailingAttemptService.get_mailing_attempts_by_owner(user, count=True)
+            successful_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Success", count=True)
+            failed_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Failed", count=True)
             user_attempts.append({
                 "user": user,
                 "total_attempts": total_attempts,

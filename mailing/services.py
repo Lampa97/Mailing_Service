@@ -8,53 +8,52 @@ CACHE_TIMEOUT = 60
 class MailingUnitService:
 
     @staticmethod
-    def get_all_mailing_units():
+    def get_all_mailing_units(count=False):
         if not CACHE_ENABLED:
             return MailingUnit.objects.all()
         key = "mailing_units"
         mailing_units = cache.get(key)
         if mailing_units is not None:
-            return mailing_units
+            return mailing_units.count() if count else mailing_units
         mailing_units = MailingUnit.objects.all()
         cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return mailing_units
+        return mailing_units.count() if count else mailing_units
 
     @staticmethod
-    def get_owner_mailing_units(owner_id):
+    def get_owner_mailing_units(owner_id, count=False):
         if not CACHE_ENABLED:
             return MailingUnit.objects.filter(owner_id=owner_id)
         key = f"owner_mailing_units_{owner_id}"
         mailing_units = cache.get(key)
         if mailing_units is not None:
-            return mailing_units
+            return mailing_units.count() if count else mailing_units
         mailing_units = MailingUnit.objects.filter(owner_id=owner_id)
         cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return mailing_units
+        return mailing_units.count() if count else mailing_units
 
     @staticmethod
-    def get_all_launched_mailing_units():
+    def get_all_launched_mailing_units(count=False):
         if not CACHE_ENABLED:
             return MailingUnit.objects.filter(status="Launched")
         key = "launched_mailing_units"
         mailing_units = cache.get(key)
         if mailing_units is not None:
-            return mailing_units
+            return mailing_units.count() if count else mailing_units
         mailing_units = MailingUnit.objects.filter(status="Launched")
         cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return mailing_units
+        return mailing_units.count() if count else mailing_units
 
     @staticmethod
-    def get_owner_launched_mailing_units(owner_id):
+    def get_owner_launched_mailing_units(owner_id, count=False):
         if not CACHE_ENABLED:
             return MailingUnit.objects.filter(owner_id=owner_id, status="Launched")
         key = f"owner_launched_mailing_units_{owner_id}"
         mailing_units = cache.get(key)
         if mailing_units is not None:
-            return mailing_units
+            return mailing_units.count() if count else mailing_units
         mailing_units = MailingUnit.objects.filter(owner_id=owner_id, status="Launched")
         cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return mailing_units
-
+        return mailing_units.count() if count else mailing_units
 
 
 class MessageService:
@@ -75,64 +74,64 @@ class MessageService:
 class MailReceiverService:
 
     @staticmethod
-    def get_all_mail_receivers():
+    def get_all_mail_receivers(count=False):
         if not CACHE_ENABLED:
             return MailReceiver.objects.all()
         key = "mail_receivers"
         mail_receivers = cache.get(key)
         if mail_receivers is not None:
-            return mail_receivers
+            return mail_receivers.count() if count else mail_receivers
         mail_receivers = MailReceiver.objects.all()
         cache.set(key, mail_receivers, CACHE_TIMEOUT)
-        return mail_receivers
+        return mail_receivers.count() if count else mail_receivers
 
     @staticmethod
-    def get_owner_mail_receivers(owner_id):
+    def get_owner_mail_receivers(owner_id, count=False):
         if not CACHE_ENABLED:
             return MailReceiver.objects.filter(owner_id=owner_id)
         key = f"owner_mail_receivers_{owner_id}"
         mail_receivers = cache.get(key)
         if mail_receivers is not None:
-            return mail_receivers
+            return mail_receivers.count() if count else mail_receivers
         mail_receivers = MailReceiver.objects.filter(owner_id=owner_id)
         cache.set(key, mail_receivers, CACHE_TIMEOUT)
-        return mail_receivers
+        return mail_receivers.count() if count else mail_receivers
 
 
 class MailingAttemptService:
 
     @staticmethod
-    def get_mailing_attempts_by_mailing(mailing_id):
+    def get_mailing_attempts_by_mailing(mailing_id, count=False):
         if not CACHE_ENABLED:
             return MailingAttempt.objects.filter(mailing=mailing_id)
         key = f"mailing_attempts_{mailing_id}"
         mailing_attempts = cache.get(key)
         if mailing_attempts is not None:
-            return mailing_attempts
+            return mailing_attempts.count() if count else mailing_attempts
         mailing_attempts = MailingAttempt.objects.filter(mailing=mailing_id)
         cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return mailing_attempts
+        return mailing_attempts.count() if count else mailing_attempts
 
     @staticmethod
-    def get_mailing_attempts_by_owner(owner):
+    def get_mailing_attempts_by_owner(owner, count=False):
         if not CACHE_ENABLED:
             return MailingAttempt.objects.filter(owner=owner)
         key = f"mailing_attempts_{owner}"
         mailing_attempts = cache.get(key)
         if mailing_attempts is not None:
-            return mailing_attempts
+            return mailing_attempts.count() if count else mailing_attempts
         mailing_attempts = MailingAttempt.objects.filter(mailing__owner=owner)
         cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return mailing_attempts
+        return mailing_attempts.count() if count else mailing_attempts
 
     @staticmethod
-    def get_mailing_attempts_by_status(owner, status):
+    def get_mailing_attempts_by_status(owner, status, count=False):
         if not CACHE_ENABLED:
             return MailingAttempt.objects.filter(status=status, mailing__owner=owner)
         key = f"mailing_attempts_{owner}_{status}"
         mailing_attempts = cache.get(key)
         if mailing_attempts is not None:
-            return mailing_attempts
+            return mailing_attempts.count() if count else mailing_attempts
         mailing_attempts = MailingAttempt.objects.filter(status=status, mailing__owner=owner)
         cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return mailing_attempts
+        return mailing_attempts.count() if count else mailing_attempts
