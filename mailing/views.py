@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
-from users.models import CustomUser
+from users.services import CustomUserService
 
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
@@ -253,7 +253,7 @@ class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = "mailing.can_view_report"
 
     def get(self, request):
-        users = CustomUser.objects.all()
+        users = CustomUserService.get_all_users()
         user_attempts = []
 
         for user in users:

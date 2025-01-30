@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="card text-center">
-    {% cache 900 user_header %}
+    {% cache 900 user_profile_header user_profile.pk %}
     <img src="{{ user_profile.avatar | media_filter }}" class="card-img-top mx-auto"
          style="width: 300px; height: 300px; object-fit: cover;" alt="...">
     <div class="card-header">
@@ -23,7 +23,7 @@
             {% endif %}
         </h5>
         {% endif %}
-        {% cache 900 user_info %}
+        {% cache 900 user_profile_info user_profile.pk %}
         <ul class="list-group">
             <li class="list-group-item">Country: {{ user_profile.country }}</li>
             <li class="list-group-item">Phone number: {{ user_profile.phone_number }}</li>

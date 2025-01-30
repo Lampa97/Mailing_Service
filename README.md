@@ -16,6 +16,7 @@ Mailing Service is a Django-based application that allows users to manage and se
 - Python 3.12
 - PostgreSQL
 - Redis
+- Django 5.3
 
 ### Steps
 1. Clone the repository:
@@ -51,22 +52,34 @@ Mailing Service is a Django-based application that allows users to manage and se
     poetry run python manage.py migrate
     ```
 
-5. Create a superuser:
+5. Create a superuser (You can use custom command provided):
     ```sh
-    poetry run python manage.py createsuperuser
+    python manage.py createadmin
     ```
 
 6. Run the development server:
     ```sh
-    poetry run python manage.py runserver
+    python manage.py runserver
     ```
+
+7. Create managers group by running the following command:
+    ```sh
+    python manage.py create_managers_group
+    ```
+
+## Configuration
+- **Email settings:** Update the email settings in `settings.py` to enable email verification and password reset functionalities.
+- **Cache settings:** Configure Redis or any other caching backend in `settings.py` if you want to enable caching.
 
 ## Usage
 1. Access the admin panel at `http://127.0.0.1:8000/admin` and log in with your superuser credentials.
 2. Create messages and manage recipients.
 3. Schedule mailings and track their status.
-
-## Running Tests
-To run tests, use the following command:
-```sh
-poetry run python manage.py test
+4. Supported sending emails via custom command:
+    ```sh
+    python manage.py send_mail "Title of the message" --recipients user1@example.com user2@example.com --message your message
+    ```
+5. You can schedule the mailing by using django-apscheduler using following command:
+   ```sh
+    python manage.py start_scheduler
+    ```

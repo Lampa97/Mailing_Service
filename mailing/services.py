@@ -12,66 +12,55 @@ def count_total(queryset, count):
     return queryset.count() if count else queryset
 
 
+def get_queryset_or_count(query, key, count, **query_options):
+    queryset = cache.get(key)
+    if queryset is not None:
+        return count_total(queryset, count)
+    queryset = query(**query_options)
+    cache.set(key, queryset, CACHE_TIMEOUT)
+    return count_total(queryset, count)
+
+
 class MailingUnitService:
 
     @staticmethod
     def get_all_mailing_units(count=False):
         """Return all mailing units if count is False otherwise return total amount of queried mailing units."""
+        mailing_units = MailingUnit.objects.all
         if not CACHE_ENABLED:
-            mailing_units = MailingUnit.objects.all()
-            return count_total(mailing_units, count)
+            return count_total(mailing_units(), count)
         key = "mailing_units"
-        mailing_units = cache.get(key)
-        if mailing_units is not None:
-            return count_total(mailing_units, count)
-        mailing_units = MailingUnit.objects.all()
-        cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return count_total(mailing_units, count)
+        return get_queryset_or_count(mailing_units, key, count)
 
     @staticmethod
     def get_owner_mailing_units(owner_id, count=False):
         """Return all mailing units of the owner if count is False
         otherwise return total amount of queried mailing units."""
+        mailing_units = MailingUnit.objects.filter
         if not CACHE_ENABLED:
-            mailing_units = MailingUnit.objects.filter(owner_id=owner_id)
-            return count_total(mailing_units, count)
+            return count_total(mailing_units(owner_id=owner_id), count)
         key = f"owner_mailing_units_{owner_id}"
-        mailing_units = cache.get(key)
-        if mailing_units is not None:
-            return count_total(mailing_units, count)
-        mailing_units = MailingUnit.objects.filter(owner_id=owner_id)
-        cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return count_total(mailing_units, count)
+        return get_queryset_or_count(mailing_units, key, count, owner_id=owner_id)
 
     @staticmethod
     def get_all_launched_mailing_units(count=False):
         """Return all launched mailing units if count is False
         otherwise return total amount of queried mailing units."""
+        mailing_units = MailingUnit.objects.filter
         if not CACHE_ENABLED:
-            mailing_units = MailingUnit.objects.filter(status="Launched")
-            return count_total(mailing_units, count)
+            return count_total(mailing_units(status="Launched"), count)
         key = "launched_mailing_units"
-        mailing_units = cache.get(key)
-        if mailing_units is not None:
-            return count_total(mailing_units, count)
-        mailing_units = MailingUnit.objects.filter(status="Launched")
-        cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return count_total(mailing_units, count)
+        return get_queryset_or_count(mailing_units, key, count, status="Launched")
 
     @staticmethod
     def get_owner_launched_mailing_units(owner_id, count=False):
         """Return all launched mailing units of the owner if count is False
         otherwise return total amount of queried mailing units."""
+        mailing_units = MailingUnit.objects.filter
         if not CACHE_ENABLED:
-            mailing_units = MailingUnit.objects.filter(owner_id=owner_id, status="Launched")
-            return count_total(mailing_units, count)
+            return count_total(mailing_units(owner_id=owner_id, status="Launched"), count)
         key = f"owner_launched_mailing_units_{owner_id}"
-        mailing_units = cache.get(key)
-        if mailing_units is not None:
-            return count_total(mailing_units, count)
-        mailing_units = MailingUnit.objects.filter(owner_id=owner_id, status="Launched")
-        cache.set(key, mailing_units, CACHE_TIMEOUT)
-        return count_total(mailing_units, count)
+        return get_queryset_or_count(mailing_units, key, count, owner_id=owner_id, status="Launched")
 
 
 class MessageService:
@@ -96,31 +85,22 @@ class MailReceiverService:
     def get_all_mail_receivers(count=False):
         """Return all mail receivers if count is False
         otherwise return total amount of queried mail receivers."""
+        mail_receivers = MailReceiver.objects.all
         if not CACHE_ENABLED:
-            mail_receivers = MailReceiver.objects.all()
-            return count_total(mail_receivers, count)
+            return count_total(mail_receivers(), count)
         key = "mail_receivers"
-        mail_receivers = cache.get(key)
-        if mail_receivers is not None:
-            return count_total(mail_receivers, count)
-        mail_receivers = MailReceiver.objects.all()
-        cache.set(key, mail_receivers, CACHE_TIMEOUT)
-        return count_total(mail_receivers, count)
+        return get_queryset_or_count(mail_receivers, key, count)
 
     @staticmethod
     def get_owner_mail_receivers(owner_id, count=False):
         """Return all mail receivers of the owner if count is False
         otherwise return total amount of queried mail receivers."""
+        mail_receivers = MailReceiver.objects.filter
         if not CACHE_ENABLED:
-            mail_receivers = MailReceiver.objects.filter(owner_id=owner_id)
-            return count_total(mail_receivers, count)
+
+            return count_total(mail_receivers(owner_id=owner_id), count)
         key = f"owner_mail_receivers_{owner_id}"
-        mail_receivers = cache.get(key)
-        if mail_receivers is not None:
-            return count_total(mail_receivers, count)
-        mail_receivers = MailReceiver.objects.filter(owner_id=owner_id)
-        cache.set(key, mail_receivers, CACHE_TIMEOUT)
-        return count_total(mail_receivers, count)
+        return get_queryset_or_count(mail_receivers, key, count, owner_id=owner_id)
 
 
 class MailingAttemptService:
@@ -129,43 +109,31 @@ class MailingAttemptService:
     def get_mailing_attempts_by_mailing(mailing_id, count=False):
         """Return all mailing attempts of the mailing if count is False
         otherwise return total amount of queried mailing attempts."""
+        mailing_attempts = MailingAttempt.objects.filter
         if not CACHE_ENABLED:
-            mailing_attempts = MailingAttempt.objects.filter(mailing=mailing_id)
-            return count_total(mailing_attempts, count)
+
+            return count_total(mailing_attempts(mailing=mailing_id), count)
         key = f"mailing_attempts_{mailing_id}"
-        mailing_attempts = cache.get(key)
-        if mailing_attempts is not None:
-            return count_total(mailing_attempts, count)
-        mailing_attempts = MailingAttempt.objects.filter(mailing=mailing_id)
-        cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return count_total(mailing_attempts, count)
+        return get_queryset_or_count(mailing_attempts, key, count, mailing=mailing_id)
 
     @staticmethod
     def get_mailing_attempts_by_owner(owner, count=False):
         """Return all mailing attempts of the owner if count is False
         otherwise return total amount of queried mailing attempts."""
+        mailing_attempts = MailingAttempt.objects.filter
         if not CACHE_ENABLED:
-            mailing_attempts = MailingAttempt.objects.filter(owner=owner)
-            return count_total(mailing_attempts, count)
+
+            return count_total(mailing_attempts(mailing__owner=owner), count)
         key = f"mailing_attempts_{owner}"
-        mailing_attempts = cache.get(key)
-        if mailing_attempts is not None:
-            return count_total(mailing_attempts, count)
-        mailing_attempts = MailingAttempt.objects.filter(mailing__owner=owner)
-        cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return count_total(mailing_attempts, count)
+        return get_queryset_or_count(mailing_attempts, key, count, mailing__owner=owner)
 
     @staticmethod
     def get_mailing_attempts_by_status(owner, status, count=False):
         """Return all mailing attempts of the owner with the specified status if count is False
         otherwise return total amount of queried mailing attempts."""
+        mailing_attempts = MailingAttempt.objects.filter
         if not CACHE_ENABLED:
-            mailing_attempts = MailingAttempt.objects.filter(status=status, mailing__owner=owner)
-            return count_total(mailing_attempts, count)
+
+            return count_total(mailing_attempts(status=status, mailing__owner=owner), count)
         key = f"mailing_attempts_{owner}_{status}"
-        mailing_attempts = cache.get(key)
-        if mailing_attempts is not None:
-            return count_total(mailing_attempts, count)
-        mailing_attempts = MailingAttempt.objects.filter(status=status, mailing__owner=owner)
-        cache.set(key, mailing_attempts, CACHE_TIMEOUT)
-        return count_total(mailing_attempts, count)
+        return get_queryset_or_count(mailing_attempts, key, count, status=status, mailing__owner=owner)

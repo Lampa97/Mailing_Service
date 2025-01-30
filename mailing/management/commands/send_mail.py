@@ -7,7 +7,9 @@ class Command(BaseCommand):
     help = """This command sends emails to all receivers in the mailing.
         It takes the title of the message as an argument.
         You can also specify a list of recipient email addresses using the --recipients argument.
-        Example: python manage.py send_mail "Title of the message" --recipients user1@example.com user2@example.com"""
+        To write a message text, use the --message argument.
+        Example: python manage.py send_mail "Title of the message" --recipients user1@example.com user2@example.com
+        --message your message"""
 
     def add_arguments(self, parser):
         parser.add_argument("title", type=str, help="Title of the message to send")
