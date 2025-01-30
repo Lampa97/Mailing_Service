@@ -30,7 +30,6 @@ class Command(BaseCommand):
         recipients = kwargs.get("recipients")
         self.__send_emails(title, message, recipients)
 
-
     def __send_emails(self, title, message, recipients=None):
         if recipients is None:
             self.stdout.write(self.style.ERROR("You didn't specify recipients email"))

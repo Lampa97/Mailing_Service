@@ -1,9 +1,11 @@
 from django.core.cache import cache
 
 from config.settings import CACHE_ENABLED
-from .models import MailingUnit, Message, MailReceiver, MailingAttempt
+
+from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 
 CACHE_TIMEOUT = 60
+
 
 def count_total(queryset, count):
     """Return the total count of the queryset if count is True, otherwise return the queryset itself."""

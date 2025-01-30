@@ -5,14 +5,15 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from .services import MailingUnitService, MailReceiverService, MailingAttemptService, MessageService
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
 from users.models import CustomUser
+
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
+from .services import MailingAttemptService, MailingUnitService, MailReceiverService, MessageService
 
 
 class MailingView(LoginRequiredMixin, View):
@@ -45,6 +46,7 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
         if self.request.user.has_perm("mailing.view_mailreceiver"):
             return MailReceiverService.get_all_mail_receivers()
         return MailReceiverService.get_owner_mail_receivers(self.request.user.id)
+
 
 @method_decorator(cache_page(60 * 15), name="dispatch")
 class MailReceiverDetailView(LoginRequiredMixin, DetailView):
@@ -90,6 +92,7 @@ class MessageListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return MessageService.get_owner_messages(self.request.user.id)
 
+
 @method_decorator(cache_page(60 * 15), name="dispatch")
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
@@ -134,6 +137,7 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
         if self.request.user.has_perm("mailing.view_mailingunit"):
             return MailingUnitService.get_all_mailing_units()
         return MailingUnitService.get_owner_mailing_units(self.request.user.id)
+
 
 @method_decorator(cache_page(60 * 15), name="dispatch")
 class MailingUnitDetailView(LoginRequiredMixin, DetailView):
@@ -254,14 +258,20 @@ class ReportView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         for user in users:
             total_attempts = MailingAttemptService.get_mailing_attempts_by_owner(user, count=True)
-            successful_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Success", count=True)
-            failed_attempts = MailingAttemptService.get_mailing_attempts_by_status(owner=user, status="Failed", count=True)
-            user_attempts.append({
-                "user": user,
-                "total_attempts": total_attempts,
-                "successful_attempts": successful_attempts,
-                "failed_attempts": failed_attempts,
-            })
+            successful_attempts = MailingAttemptService.get_mailing_attempts_by_status(
+                owner=user, status="Success", count=True
+            )
+            failed_attempts = MailingAttemptService.get_mailing_attempts_by_status(
+                owner=user, status="Failed", count=True
+            )
+            user_attempts.append(
+                {
+                    "user": user,
+                    "total_attempts": total_attempts,
+                    "successful_attempts": successful_attempts,
+                    "failed_attempts": failed_attempts,
+                }
+            )
 
         context = {
             "user_attempts": user_attempts,

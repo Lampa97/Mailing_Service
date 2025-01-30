@@ -1,18 +1,20 @@
+import secrets
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
-from django.shortcuts import redirect, get_object_or_404, render
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormView
-import secrets
-from .services import CustomUserService
 
 from .forms import CustomUserCreationForm, EditProfileForm
 from .models import CustomUser
+from .services import CustomUserService
+
 
 def email_verification(request, token):
     user = get_object_or_404(CustomUser, token=token)
@@ -47,7 +49,7 @@ class RegisterView(FormView):
             subject="Email confirmation",
             message=f"Hi! Please follow the link to confirm your email {url}",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email]
+            recipient_list=[user.email],
         )
         return super().form_valid(form)
 
