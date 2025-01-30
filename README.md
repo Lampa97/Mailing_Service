@@ -13,10 +13,10 @@ Mailing Service is a Django-based application that allows users to manage and se
 ## Installation
 
 ### Prerequisites
-- Python 3.12
+- Python >=3.11
 - PostgreSQL
 - Redis
-- Django 5.3
+- Django >=5.0
 
 ### Steps
 1. Clone the repository:
