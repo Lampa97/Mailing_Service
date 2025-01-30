@@ -4,16 +4,21 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormView
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+import secrets
 from .services import CustomUserService
 
 from .forms import CustomUserCreationForm, EditProfileForm
 from .models import CustomUser
+
+def email_verification(request, token):
+    user = get_object_or_404(CustomUser, token=token)
+    user.is_active = True
+    user.save()
+    return redirect(reverse("users:login"))
 
 
 class CustomLoginView(LoginView):
@@ -32,17 +37,19 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         user = form.save()
-        login(self.request, user)
-        self.send_welcome_email(user.email)
+        user.is_active = False
+        token = secrets.token_hex(16)
+        user.token = token
+        user.save()
+        host = self.request.get_host()
+        url = f"http://{host}/users/email-confirm/{token}/"
+        send_mail(
+            subject="Email confirmation",
+            message=f"Hi! Please follow the link to confirm your email {url}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email]
+        )
         return super().form_valid(form)
-
-    def send_welcome_email(self, user_email):
-        subject = "Поздравляем с регистрацией!"
-        message = """Примите наши поздравления с регистрацией в нашем сервисе!
-        Теперь вы можете просматривать продукты и управлять ими"""
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = [user_email]
-        send_mail(subject, message, from_email, recipient_list)
 
 
 class EditProfileUpdateView(LoginRequiredMixin, UpdateView):

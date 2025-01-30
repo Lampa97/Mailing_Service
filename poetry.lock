@@ -137,20 +137,6 @@ files = [
 ]
 
 [[package]]
-name = "deprecation"
-version = "2.1.0"
-description = "A library to handle automated deprecations"
-optional = false
-python-versions = "*"
-files = [
-    {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
-    {file = "deprecation-2.1.0.tar.gz", hash = "sha256:72b3bde64e5d778694b0cf68178aed03d15e15477116add3fb773e581f9518ff"},
-]
-
-[package.dependencies]
-packaging = "*"
-
-[[package]]
 name = "django"
 version = "5.1.5"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -184,22 +170,6 @@ files = [
 [package.dependencies]
 apscheduler = ">=3.2,<4.0"
 django = ">=4.2"
-
-[[package]]
-name = "django-email-verification"
-version = "0.3.3"
-description = "Email confirmation app for django"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "django-email-verification-0.3.3.tar.gz", hash = "sha256:da110400449f15e200e27cce1ddf32afacd361c1ea710dcd18f1244410a73f1e"},
-    {file = "django_email_verification-0.3.3-py3-none-any.whl", hash = "sha256:ba4d8211e55d56e75243ca9453e5623d0eb59de4729cb39a677d57a42d6ef0aa"},
-]
-
-[package.dependencies]
-deprecation = "*"
-PyJWT = "*"
-validators = "*"
 
 [[package]]
 name = "executing"
@@ -701,23 +671,6 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
-name = "pyjwt"
-version = "2.10.1"
-description = "JSON Web Token implementation in Python"
-optional = false
-python-versions = ">=3.9"
-files = [
-    {file = "PyJWT-2.10.1-py3-none-any.whl", hash = "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb"},
-    {file = "pyjwt-2.10.1.tar.gz", hash = "sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953"},
-]
-
-[package.extras]
-crypto = ["cryptography (>=3.4.0)"]
-dev = ["coverage[toml] (==5.0.4)", "cryptography (>=3.4.0)", "pre-commit", "pytest (>=6.0.0,<7.0.0)", "sphinx", "sphinx-rtd-theme", "zope.interface"]
-docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
-
-[[package]]
 name = "python-dotenv"
 version = "1.0.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -835,20 +788,6 @@ tzdata = {version = "*", markers = "platform_system == \"Windows\""}
 devenv = ["check-manifest", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)", "zest.releaser"]
 
 [[package]]
-name = "validators"
-version = "0.34.0"
-description = "Python Data Validation for Humans™"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "validators-0.34.0-py3-none-any.whl", hash = "sha256:c804b476e3e6d3786fa07a30073a4ef694e617805eb1946ceee3fe5a9b8b1321"},
-    {file = "validators-0.34.0.tar.gz", hash = "sha256:647fe407b45af9a74d245b943b18e6a816acf4926974278f6dd617778e1e781f"},
-]
-
-[package.extras]
-crypto-eth-addresses = ["eth-hash[pycryptodome] (>=0.7.0)"]
-
-[[package]]
 name = "wcwidth"
 version = "0.2.13"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -862,4 +801,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e367f0e57ff883b1123357e432a7a6385f9a368e6063f89bc951a5e97f8bfcb4"
+content-hash = "0ca70f817bd18bf42f680917ae6859e84eb71ea31f43f113572453f2076772d6"
