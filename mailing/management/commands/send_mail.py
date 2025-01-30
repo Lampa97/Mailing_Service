@@ -2,11 +2,10 @@ from django.conf import settings
 from django.core.mail import BadHeaderError, send_mail
 from django.core.management.base import BaseCommand
 
-from mailing.models import MailingAttempt, MailingUnit, Message
-
 
 class Command(BaseCommand):
-    help = """This command sends emails to all receivers in the mailing. It takes the title of the message as an argument.
+    help = """This command sends emails to all receivers in the mailing.
+        It takes the title of the message as an argument.
         You can also specify a list of recipient email addresses using the --recipients argument.
         Example: python manage.py send_mail "Title of the message" --recipients user1@example.com user2@example.com"""
 

@@ -160,7 +160,10 @@ LOGIN_REDIRECT_URL = "mailing:home"
 
 LOGIN_URL = "users:login"
 
-CACHE_ENABLED = False
+LOGOUT_REDIRECT_URL = "users:logout"
+
+
+CACHE_ENABLED = True
 
 if CACHE_ENABLED:
     CACHES = {

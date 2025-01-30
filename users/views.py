@@ -2,7 +2,6 @@ import secrets
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
@@ -11,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormView
 
-from .forms import CustomUserCreationForm, EditProfileForm
+from .forms import CustomUserCreationForm, EditProfileForm, PasswordResetConfirmForm, PasswordResetRequestForm
 from .models import CustomUser
 from .services import CustomUserService
 
@@ -29,7 +28,8 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy("mailing:home")
+    template_name = "logout.html"
+    next_page = reverse_lazy("users:logout")
 
 
 class RegisterView(FormView):
@@ -88,3 +88,47 @@ class ChangeUserStatusView(PermissionRequiredMixin, View):
         user.is_active = not user.is_active
         user.save()
         return redirect("users:all-users")
+
+
+class PasswordResetRequestView(View):
+    def get(self, request):
+        form = PasswordResetRequestForm()
+        return render(request, "password_reset_request.html", {"form": form})
+
+    def post(self, request):
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            user = CustomUser.objects.get(email=form.cleaned_data["email"])
+            host = self.request.get_host()
+            token = secrets.token_hex(16)
+            user.password_reset_token = token
+            user.save()
+            reset_url = f"{host}/users/reset-password-confirm/{token}/"
+            send_mail(
+                "Password Reset Request",
+                f"Use this link to reset your password: {reset_url}",
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+            )
+            messages.success(request, "Password reset request sent to your email account.")
+            return redirect("users:login")
+        return render(request, "password_reset_request.html", {"form": form})
+
+
+class PasswordResetConfirmView(View):
+
+    def get(self, request, token):
+        user = get_object_or_404(CustomUser, password_reset_token=token)
+        form = PasswordResetConfirmForm()
+        return render(request, "password_reset_confirm.html", {"form": form, "token": token, "email": user.email})
+
+    def post(self, request, token):
+        user = get_object_or_404(CustomUser, password_reset_token=token)
+        form = PasswordResetConfirmForm(request.POST)
+        if form.is_valid():
+            user.set_password(form.cleaned_data["password1"])
+            user.password_reset_token = None
+            user.save()
+            messages.success(request, "Your new password is successfully set.")
+            return redirect("users:login")
+        return render(request, "password_reset_confirm.html", {"form": form, "token": token})

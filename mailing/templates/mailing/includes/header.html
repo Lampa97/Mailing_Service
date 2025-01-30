@@ -61,9 +61,6 @@
                 {% csrf_token %}
                 <button type="submit" class="p-2 btn btn-outline-danger">Logout</button>
             </form>
-            {% else %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Signup</a>
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Login</a>
             {% endif %}
 
         </div>

@@ -43,3 +43,29 @@ class EditProfileForm(FormValidatorMixin, forms.ModelForm):
         self.fields["country"].widget.attrs.update({"class": "form-control"})
         self.fields["phone_number"].widget.attrs.update({"class": "form-control"})
         self.fields["avatar"].widget.attrs.update({"class": "form-control"})
+
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"].widget.attrs.update({"class": "form-control"})
+
+
+class PasswordResetConfirmForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput, label="New Password")
+    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm New Password")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password1"].widget.attrs.update({"class": "form-control"})
+        self.fields["password2"].widget.attrs.update({"class": "form-control"})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+        return cleaned_data

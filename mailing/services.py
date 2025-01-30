@@ -30,7 +30,8 @@ class MailingUnitService:
 
     @staticmethod
     def get_owner_mailing_units(owner_id, count=False):
-        """Return all mailing units of the owner if count is False otherwise return total amount of queried mailing units."""
+        """Return all mailing units of the owner if count is False
+        otherwise return total amount of queried mailing units."""
         if not CACHE_ENABLED:
             mailing_units = MailingUnit.objects.filter(owner_id=owner_id)
             return count_total(mailing_units, count)
@@ -44,7 +45,8 @@ class MailingUnitService:
 
     @staticmethod
     def get_all_launched_mailing_units(count=False):
-        """Return all launched mailing units if count is False otherwise return total amount of queried mailing units."""
+        """Return all launched mailing units if count is False
+        otherwise return total amount of queried mailing units."""
         if not CACHE_ENABLED:
             mailing_units = MailingUnit.objects.filter(status="Launched")
             return count_total(mailing_units, count)
@@ -58,7 +60,8 @@ class MailingUnitService:
 
     @staticmethod
     def get_owner_launched_mailing_units(owner_id, count=False):
-        """Return all launched mailing units of the owner if count is False otherwise return total amount of queried mailing units."""
+        """Return all launched mailing units of the owner if count is False
+        otherwise return total amount of queried mailing units."""
         if not CACHE_ENABLED:
             mailing_units = MailingUnit.objects.filter(owner_id=owner_id, status="Launched")
             return count_total(mailing_units, count)
@@ -91,7 +94,8 @@ class MailReceiverService:
 
     @staticmethod
     def get_all_mail_receivers(count=False):
-        """Return all mail receivers if count is False otherwise return total amount of queried mail receivers."""
+        """Return all mail receivers if count is False
+        otherwise return total amount of queried mail receivers."""
         if not CACHE_ENABLED:
             mail_receivers = MailReceiver.objects.all()
             return count_total(mail_receivers, count)
@@ -105,7 +109,8 @@ class MailReceiverService:
 
     @staticmethod
     def get_owner_mail_receivers(owner_id, count=False):
-        """Return all mail receivers of the owner if count is False otherwise return total amount of queried mail receivers."""
+        """Return all mail receivers of the owner if count is False
+        otherwise return total amount of queried mail receivers."""
         if not CACHE_ENABLED:
             mail_receivers = MailReceiver.objects.filter(owner_id=owner_id)
             return count_total(mail_receivers, count)
@@ -122,7 +127,8 @@ class MailingAttemptService:
 
     @staticmethod
     def get_mailing_attempts_by_mailing(mailing_id, count=False):
-        """Return all mailing attempts of the mailing if count is False otherwise return total amount of queried mailing attempts."""
+        """Return all mailing attempts of the mailing if count is False
+        otherwise return total amount of queried mailing attempts."""
         if not CACHE_ENABLED:
             mailing_attempts = MailingAttempt.objects.filter(mailing=mailing_id)
             return count_total(mailing_attempts, count)
@@ -136,7 +142,8 @@ class MailingAttemptService:
 
     @staticmethod
     def get_mailing_attempts_by_owner(owner, count=False):
-        """Return all mailing attempts of the owner if count is False otherwise return total amount of queried mailing attempts."""
+        """Return all mailing attempts of the owner if count is False
+        otherwise return total amount of queried mailing attempts."""
         if not CACHE_ENABLED:
             mailing_attempts = MailingAttempt.objects.filter(owner=owner)
             return count_total(mailing_attempts, count)
@@ -150,7 +157,8 @@ class MailingAttemptService:
 
     @staticmethod
     def get_mailing_attempts_by_status(owner, status, count=False):
-        """Return all mailing attempts of the owner with the specified status if count is False otherwise return total amount of queried mailing attempts."""
+        """Return all mailing attempts of the owner with the specified status if count is False
+        otherwise return total amount of queried mailing attempts."""
         if not CACHE_ENABLED:
             mailing_attempts = MailingAttempt.objects.filter(status=status, mailing__owner=owner)
             return count_total(mailing_attempts, count)

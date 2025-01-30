@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     country = models.CharField(max_length=50, blank=True, null=True, verbose_name="Country")
 
     token = models.CharField(max_length=100, blank=True, null=True, verbose_name="Token")
+    password_reset_token = models.CharField(max_length=100, blank=True, null=True, verbose_name="Token")
 
     class Meta:
         verbose_name = "User"
