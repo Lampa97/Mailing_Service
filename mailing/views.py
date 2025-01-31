@@ -1,10 +1,13 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.mail import BadHeaderError, send_mail
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
 from users.services import CustomUserService
@@ -12,7 +15,7 @@ from users.services import CustomUserService
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
 from .logger import mail_logger
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
-from .services import MailingAttemptService, MailingUnitService, MailReceiverService, MessageService
+from .services import CACHE_TIMEOUT, MailingAttemptService, MailingUnitService, MailReceiverService, MessageService
 
 
 class MailingView(LoginRequiredMixin, View):
@@ -22,14 +25,18 @@ class MailingView(LoginRequiredMixin, View):
             all_mailings = MailingUnitService.get_all_mailing_units(count=True)
             launched_mailings = MailingUnitService.get_all_launched_mailing_units(count=True)
             unique_receivers = MailReceiverService.get_all_mail_receivers(count=True)
-            mail_logger.info(f"""Counted all mailings, launched mailings and unique
-            receivers for manager {self.request.user}""")
+            mail_logger.info(
+                f"""Counted all mailings, launched mailings and unique
+            receivers for manager {self.request.user}"""
+            )
         else:
             all_mailings = MailingUnitService.get_owner_mailing_units(request.user.id, count=True)
             launched_mailings = MailingUnitService.get_owner_launched_mailing_units(request.user.id, count=True)
             unique_receivers = MailReceiverService.get_owner_mail_receivers(request.user.id, count=True)
-            mail_logger.info(f"""Counted user-specific mailings, launched mailings
-            and unique receivers for user {self.request.user}""")
+            mail_logger.info(
+                f"""Counted user-specific mailings, launched mailings
+            and unique receivers for user {self.request.user}"""
+            )
 
         context = {
             "all_mailings": all_mailings,
@@ -53,6 +60,7 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
         return MailReceiverService.get_owner_mail_receivers(self.request.user.id)
 
 
+@method_decorator(cache_page(CACHE_TIMEOUT), name="dispatch")
 class MailReceiverDetailView(LoginRequiredMixin, DetailView):
     model = MailReceiver
     template_name = "mailing/mail_receiver/mail_receiver_detail.html"
@@ -79,7 +87,11 @@ class MailReceiverUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/mail_receiver/mail_receiver_form.html"
 
     def get_success_url(self):
-        return reverse_lazy("mailing:mail-receiver-detail", kwargs={"pk": self.object.pk})
+        messages.success(
+            self.request,
+            f"Mail receiver updated successfully. Changes will be displayed after {CACHE_TIMEOUT} seconds",
+        )
+        return reverse_lazy("mailing:mail-receivers-list")
 
 
 class MailReceiverDeleteView(LoginRequiredMixin, DeleteView):
@@ -92,13 +104,14 @@ class MailReceiverDeleteView(LoginRequiredMixin, DeleteView):
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = "mailing/message/messages_list.html"
-    context_object_name = "messages"
+    context_object_name = "all_messages"
 
     def get_queryset(self):
         mail_logger.info(f"User {self.request.user} is viewing their messages")
         return MessageService.get_owner_messages(self.request.user.id)
 
 
+@method_decorator(cache_page(CACHE_TIMEOUT), name="dispatch")
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = "mailing/message/message_detail.html"
@@ -124,7 +137,11 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/message/message_form.html"
 
     def get_success_url(self):
-        return reverse_lazy("mailing:message-detail", kwargs={"pk": self.object.pk})
+        messages.success(
+            self.request,
+            f"Message updated successfully. Changes inside message will be displayed after {CACHE_TIMEOUT} seconds",
+        )
+        return reverse_lazy("mailing:messages-list")
 
 
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
@@ -147,6 +164,7 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
         return MailingUnitService.get_owner_mailing_units(self.request.user.id)
 
 
+@method_decorator(cache_page(CACHE_TIMEOUT), name="dispatch")
 class MailingUnitDetailView(LoginRequiredMixin, DetailView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -169,7 +187,12 @@ class MailingUnitUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingUnit
     form_class = MailingUnitForm
     template_name = "mailing/mailing_unit/mailing_unit_form.html"
-    success_url = reverse_lazy("mailing:mailing-units-list")
+
+    def get_success_url(self):
+        messages.success(
+            self.request, f"Mailing updated successfully. Changes will be displayed after {CACHE_TIMEOUT} seconds"
+        )
+        return reverse_lazy("mailing:mailing-units-list")
 
 
 class MailingUnitDeleteView(LoginRequiredMixin, DeleteView):

@@ -4,11 +4,21 @@
 
 {% block content %}
 
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="row row-cols-1 row-cols-md-2 g-4">
-    {% if messages|length == 0 %}
+    {% if all_messages|length == 0 %}
     <h4>No messages created</h4>
     {% endif %}
-    {% for message in messages %}
+    {% for message in all_messages %}
     <div class="col">
         <div class="card">
             <div class="card-body">

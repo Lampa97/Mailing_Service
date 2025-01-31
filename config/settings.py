@@ -138,11 +138,11 @@ LOG_LEVEL = logging.DEBUG
 LOG_FORMAT = "%(log_color)s%(levelname)s: %(asctime)s: %(message)s"
 
 LOG_COLORS = {
-    'DEBUG': 'cyan',
-    'INFO': 'green',
-    'WARNING': 'yellow',
-    'ERROR': 'red',
-    'CRITICAL': 'bold_red',
+    "DEBUG": "cyan",
+    "INFO": "green",
+    "WARNING": "yellow",
+    "ERROR": "red",
+    "CRITICAL": "bold_red",
 }
 
 formatter = colorlog.ColoredFormatter(LOG_FORMAT, log_colors=LOG_COLORS)
