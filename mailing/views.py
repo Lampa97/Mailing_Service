@@ -1,4 +1,4 @@
-import logging
+from .logger import mail_logger
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -16,8 +16,6 @@ from users.services import CustomUserService
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 from .services import MailingAttemptService, MailingUnitService, MailReceiverService, MessageService
-
-mail_logger = logging.getLogger("mail_logger")
 
 
 class MailingView(LoginRequiredMixin, View):
@@ -58,7 +56,6 @@ class MailReceiverListView(LoginRequiredMixin, ListView):
         return MailReceiverService.get_owner_mail_receivers(self.request.user.id)
 
 
-@method_decorator(cache_page(60 * 5), name="dispatch")
 class MailReceiverDetailView(LoginRequiredMixin, DetailView):
     model = MailReceiver
     template_name = "mailing/mail_receiver/mail_receiver_detail.html"
@@ -74,7 +71,7 @@ class MailReceiverCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        mail_logger.info(f"User {self.request.user} created a new mail receiver")
+        mail_logger.info(f"User {self.request.user} created a new mail receiver {form.instance}")
         return super().form_valid(form)
 
 
@@ -105,7 +102,6 @@ class MessageListView(LoginRequiredMixin, ListView):
         return MessageService.get_owner_messages(self.request.user.id)
 
 
-@method_decorator(cache_page(60 * 5), name="dispatch")
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = "mailing/message/message_detail.html"
@@ -154,7 +150,6 @@ class MailingUnitListView(LoginRequiredMixin, ListView):
         return MailingUnitService.get_owner_mailing_units(self.request.user.id)
 
 
-@method_decorator(cache_page(60 * 5), name="dispatch")
 class MailingUnitDetailView(LoginRequiredMixin, DetailView):
     model = MailingUnit
     template_name = "mailing/mailing_unit/mailing_unit_detail.html"
@@ -196,7 +191,7 @@ class MailingUnitSendMailView(LoginRequiredMixin, View):
         mailing_unit = get_object_or_404(MailingUnit, pk=pk)
         self.send_emails(mailing_unit)
         self.update_status(mailing_unit, "Launched")
-        mail_logger.info(f"User {self.request.user} sent emails for mailing unit {mailing_unit}")
+        mail_logger.info(f"User {self.request.user} sent emails for mailing unit {mailing_unit.message}")
         return redirect("mailing:mailing-units-list")
 
     def send_emails(self, mailing_unit):

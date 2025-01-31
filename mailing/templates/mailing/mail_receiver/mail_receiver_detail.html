@@ -12,7 +12,7 @@
         <h5 class="card-title">Email: {{ mail_receiver.email }}</h5>
         <div class="card-footer">
             <p class="text-secondary">Comment: {{ mail_receiver.comment }}</p>
-            {% if mailing_unit.owner == user %}
+            {% if mail_receiver.owner.id == user.id %}
             <a href="{% url 'mailing:mail-receiver-update' mail_receiver.pk %}">
                 <button type="button" class="btn btn-lg btn-block btn-outline-secondary">Edit</button>
             </a>

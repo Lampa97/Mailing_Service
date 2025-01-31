@@ -1,4 +1,4 @@
-import logging
+from .logger import users_logger
 import secrets
 
 from django.conf import settings
@@ -14,8 +14,6 @@ from django.views.generic.edit import FormView
 from .forms import CustomUserCreationForm, EditProfileForm, PasswordResetConfirmForm, PasswordResetRequestForm
 from .models import CustomUser
 from .services import CustomUserService
-
-users_logger = logging.getLogger("users")
 
 
 def email_verification(request, token):

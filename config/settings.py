@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-
+import colorlog
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -131,6 +132,20 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+LOG_LEVEL = logging.DEBUG
+
+LOG_FORMAT = "%(log_color)s%(levelname)s: %(asctime)s: %(message)s"
+
+LOG_COLORS = {
+    'DEBUG': 'cyan',
+    'INFO': 'green',
+    'WARNING': 'yellow',
+    'ERROR': 'red',
+    'CRITICAL': 'bold_red',
+}
+
+formatter = colorlog.ColoredFormatter(LOG_FORMAT, log_colors=LOG_COLORS)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -138,6 +153,14 @@ LOGGING = {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
+            "formatter": "colored",
+        },
+    },
+    "formatters": {
+        "colored": {
+            "()": colorlog.ColoredFormatter,
+            "format": LOG_FORMAT,
+            "log_colors": LOG_COLORS,
         },
     },
     "loggers": {
