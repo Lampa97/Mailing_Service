@@ -13,7 +13,7 @@ from django.views.generic.edit import FormView
 from .forms import CustomUserCreationForm, EditProfileForm, PasswordResetConfirmForm, PasswordResetRequestForm
 from .logger import users_logger
 from .models import CustomUser
-from .services import CustomUserService
+from .services import CACHE_TIMEOUT, CustomUserService
 
 
 def email_verification(request, token):
@@ -64,6 +64,9 @@ class EditProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "edit_profile.html"
 
     def get_success_url(self):
+        messages.success(
+            self.request, f"Profile updated successfully. Changes will be displayed after {CACHE_TIMEOUT} seconds."
+        )
         return reverse_lazy("users:user-profile", kwargs={"pk": self.object.pk})
 
 
@@ -79,6 +82,11 @@ class UserProfileDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
     template_name = "user_profile.html"
     context_object_name = "user_profile"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["CACHE_TIMEOUT"] = CACHE_TIMEOUT
+        return context
 
 
 class ChangeUserStatusView(PermissionRequiredMixin, View):
