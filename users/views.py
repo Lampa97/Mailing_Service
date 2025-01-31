@@ -1,3 +1,4 @@
+import logging
 import secrets
 
 from django.conf import settings
@@ -14,11 +15,14 @@ from .forms import CustomUserCreationForm, EditProfileForm, PasswordResetConfirm
 from .models import CustomUser
 from .services import CustomUserService
 
+users_logger = logging.getLogger("users")
+
 
 def email_verification(request, token):
     user = get_object_or_404(CustomUser, token=token)
     user.is_active = True
     user.save()
+    users_logger.info(f"User {user} confirmed email.")
     return redirect(reverse("users:login"))
 
 
@@ -43,6 +47,7 @@ class RegisterView(FormView):
         token = secrets.token_hex(16)
         user.token = token
         user.save()
+        users_logger.info(f"User {user} registered.")
         host = self.request.get_host()
         url = f"http://{host}/users/email-confirm/{token}/"
         send_mail(
@@ -51,6 +56,7 @@ class RegisterView(FormView):
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
         )
+        users_logger.info(f"Email confirmation sent to {user}.")
         return super().form_valid(form)
 
 
@@ -87,6 +93,7 @@ class ChangeUserStatusView(PermissionRequiredMixin, View):
             return redirect("users:all-users")
         user.is_active = not user.is_active
         user.save()
+        users_logger.info(f"User {user} status changed.")
         return redirect("users:all-users")
 
 
@@ -103,6 +110,7 @@ class PasswordResetRequestView(View):
             token = secrets.token_hex(16)
             user.password_reset_token = token
             user.save()
+            users_logger.info(f"User {user} requested password reset.")
             reset_url = f"{host}/users/reset-password-confirm/{token}/"
             send_mail(
                 "Password Reset Request",
@@ -110,6 +118,7 @@ class PasswordResetRequestView(View):
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email],
             )
+            users_logger.info(f"Password reset request sent to {user}.")
             messages.success(request, "Password reset request sent to your email account.")
             return redirect("users:login")
         return render(request, "password_reset_request.html", {"form": form})
@@ -129,6 +138,7 @@ class PasswordResetConfirmView(View):
             user.set_password(form.cleaned_data["password1"])
             user.password_reset_token = None
             user.save()
+            users_logger.info(f"User {user} password reset.")
             messages.success(request, "Your new password is successfully set.")
             return redirect("users:login")
         return render(request, "password_reset_confirm.html", {"form": form, "token": token})
