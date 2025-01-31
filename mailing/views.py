@@ -1,5 +1,3 @@
-from .logger import mail_logger
-
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.mail import BadHeaderError, send_mail
@@ -7,13 +5,12 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
 from users.services import CustomUserService
 
 from .forms import MailingUnitForm, MailReceiverForm, MessageForm
+from .logger import mail_logger
 from .models import MailingAttempt, MailingUnit, MailReceiver, Message
 from .services import MailingAttemptService, MailingUnitService, MailReceiverService, MessageService
 

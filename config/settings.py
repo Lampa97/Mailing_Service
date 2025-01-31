@@ -1,7 +1,8 @@
+import logging
 import os
 from pathlib import Path
+
 import colorlog
-import logging
 from dotenv import load_dotenv
 
 load_dotenv()

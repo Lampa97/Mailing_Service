@@ -1,4 +1,3 @@
-from .logger import users_logger
 import secrets
 
 from django.conf import settings
@@ -12,6 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView, View
 from django.views.generic.edit import FormView
 
 from .forms import CustomUserCreationForm, EditProfileForm, PasswordResetConfirmForm, PasswordResetRequestForm
+from .logger import users_logger
 from .models import CustomUser
 from .services import CustomUserService
 

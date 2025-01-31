@@ -1,4 +1,5 @@
 import logging
+
 from config import settings
 
 LOG_LEVEL = logging.DEBUG
