@@ -12,10 +12,10 @@
     {% endfor %}
 </div>
 {% endif %}
-
+<h4>Already joined us? Please login!</h4>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.as_table }}
     <button class="btn btn-primary" type="submit">Login</button>
     <p><a href="{% url 'users:reset-password' %}" class="link-secondary">Forgot password?</a></p>
 </form>
