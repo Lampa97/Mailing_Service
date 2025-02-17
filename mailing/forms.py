@@ -7,7 +7,7 @@ class MailingUnitForm(forms.ModelForm):
     receivers = forms.ModelMultipleChoiceField(
         queryset=MailReceiver.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check"}),
-        label="Получатели",
+        label="Mail Receivers",
     )
 
     class Meta:
@@ -22,21 +22,21 @@ class MailingUnitForm(forms.ModelForm):
 class MailReceiverForm(forms.ModelForm):
     class Meta:
         model = MailReceiver
-        fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super(MailReceiverForm, self).__init__(*args, **kwargs)
-        self.fields["email"].widget.attrs.update({"class": "form-control", "placeholder": "Введите email"})
-        self.fields["full_name"].widget.attrs.update({"class": "form-control", "placeholder": "Введите Ф.И.О"})
-        self.fields["comment"].widget.attrs.update({"class": "form-control", "placeholder": "Введите комментарий"})
+        self.fields["email"].widget.attrs.update({"class": "form-control", "placeholder": "Enter email"})
+        self.fields["full_name"].widget.attrs.update({"class": "form-control", "placeholder": "Enter full name"})
+        self.fields["comment"].widget.attrs.update({"class": "form-control", "placeholder": "Enter comment"})
 
 
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs)
-        self.fields["title"].widget.attrs.update({"class": "form-control", "placeholder": "Введите тему сообщения"})
-        self.fields["body"].widget.attrs.update({"class": "form-control", "placeholder": "Введите текст сообщения"})
+        self.fields["title"].widget.attrs.update({"class": "form-control", "placeholder": "Enter message title"})
+        self.fields["body"].widget.attrs.update({"class": "form-control", "placeholder": "Enter message body"})
